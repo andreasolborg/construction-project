@@ -33,10 +33,12 @@ import random
 from openpyxl import load_workbook
 
 class Task:
-    def __init__(self, code, description, durations, predecessors):
+    def __init__(self, code, description, durations, predecessors, r=1):  # r is the risk factor, default is 1 (no risk). May be more dynamic in the future
         self.code = code
         self.description = description
         self.durations = durations
+        self.durations = self.update_durations_with_risk_factor(r)  # Update the durations with the risk factor, First in task 2.2 in the assignment
+
         self.predecessors = predecessors
         self.duration = random.triangular(*durations) # Randomly generate a duration from the given range of durations (min, mode, max)
         # self.duration = durations[1] # Use the mode as the duration
@@ -47,21 +49,18 @@ class Task:
         self.late_completion_date = 0
         self.is_critical = False
 
-    # Getters and setters for the dates
-    def get_early_start_date(self):
-        return self.early_start_date
-    
-    def get_early_completion_date(self):
-        return self.early_completion_date
-
-    def get_late_start_date(self):
-        return self.late_start_date
-
-    def get_late_completion_date(self):
-        return self.late_completion_date
-    
-    def get_is_critical(self):
-        return self.is_critical
+    def update_durations_with_risk_factor(self, r):
+        a = self.durations[0]
+        e = self.durations[1]
+        b = self.durations[2]
+        e_new = e * r
+        if e_new < a:
+            e_new = a
+        elif e_new > b:
+            # set e_new as b
+            e_new = b
+        self.durations = (a, e_new, b)
+        return self.durations
 
     def add_predecessor(self, predecessor):
         self.predecessors.append(predecessor)
@@ -136,8 +135,10 @@ class Project:
             type = row[0]
             code = row[1]
             description = row[2]
-            durations = eval(str(row[3])) # Convert string to list of integers, if it is None, then the list is (0, 0, 0)
-            durations = (0, 0, 0) if durations is None else durations
+
+            durations = eval(str(row[3]))
+            durations = (0.0, 0.0, 0.0) if durations is None else durations
+
             predecessors = [] if row[4] is None else row[4].split(", ")
             if type == "Task" or type == "Gate":
                 tasks.append(Task(code, description, durations, predecessors))
@@ -151,9 +152,6 @@ class Project:
             task.predecessors = new_predecessors
         self.tasks = tasks
         wb.close()
-
-    
-
 
     def print_project(self):
         '''
@@ -194,7 +192,6 @@ class Project:
         The minimum of the porject is the maximum of the early completion dates of the tasks
         Early dates is thus calculated by propagating values from the source nodes to the sink nodes
         '''
-        print("Finding early dates...")
         tasks = self.tasks.copy()
         while len(tasks) > 0:
             for task in tasks:
@@ -217,7 +214,6 @@ class Project:
                     task.early_completion_date = task.early_start_date + task.duration
                 tasks.remove(task)
         self.duration = max([task.early_completion_date for task in self.tasks])
-        print("Early dates found.")
         return self.duration
         
     def find_late_dates(self, duration_index=None):
@@ -231,7 +227,6 @@ class Project:
             b. Remove it from the list
             c. Calculate its late start date and late completion date
         '''
-        print("Finding late dates...")
         tasks = self.tasks.copy()
         while len(tasks) > 0:
             for task in tasks:
@@ -253,10 +248,10 @@ class Project:
                     task.late_completion_date = min([successor.late_start_date for successor in task.successors])
                     task.late_start_date = task.late_completion_date - task.duration
                 tasks.remove(task)
-                print("Removed task: ", task)
-        print("Late dates found.")
+        #         print("Removed task: ", task)
+        # print("Late dates found.")
 
-    # Find the critical tasks
+    # Find the critical tasks. A task is critical if its early and late dates are equal.
     def find_critical_tasks(self):
         for task in self.tasks:
             if task.early_start_date == task.late_start_date and task.early_completion_date == task.late_completion_date:
@@ -269,7 +264,7 @@ class Project:
     ######################
 
     risk_factors = [0.8, 1.0, 1.2, 1.4]
-    expected_duration =0 
+    expected_duration = 0 
 
 
 def main():
@@ -278,7 +273,7 @@ def main():
     project.find_early_dates("Shortest")
     project.find_late_dates("Shortest")
     project.find_critical_tasks()
-    project.print_project()
+    # project.print_project()
 
     project.set_shortest_duration()
     project.set_expected_duration()
