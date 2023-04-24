@@ -30,3 +30,8 @@ Attributes:
 - List of tasks
 - early and late project duration
   - These are determined by 
+
+
+early completion date = duration
+
+late start date 

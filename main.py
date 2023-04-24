@@ -38,7 +38,8 @@ class Task:
         self.description = description
         self.durations = durations
         self.predecessors = predecessors
-        self.duration = random.triangular(*durations)
+        # self.duration = random.triangular(*durations) # Randomly generate a duration from the given range of durations (min, mode, max)
+        self.duration = durations[1] # Use the mode as the duration
         self.successors = []
         self.early_start_date = 0
         self.early_completion_date = 0
@@ -63,13 +64,12 @@ class Task:
         return self.is_critical
 
     def add_predecessor(self, predecessor):
-        # Add the predecessor to the list of predecessors
-        print("Adding predecessor", predecessor.code, "to", self.code)
         self.predecessors.append(predecessor)
-        if predecessor not in self.successors:
-            self.successors.append(predecessor)
-        
+        predecessor.successors.append(self)
 
+    def add_successor(self, successor):
+        self.successors.append(successor)
+        successor.predecessors.append(self)    
         
     def clear_predecessors(self):
         self.predecessors = []
@@ -77,8 +77,21 @@ class Task:
     def clear_successors(self):
         self.successors = []
 
+    def has_predecessor_in_list(self, tasks):
+        for task in tasks:
+            if task in self.predecessors:
+                return True
+        return False
+    
+    def has_successor_in_list(self, tasks):
+        for task in tasks:
+            if task in self.successors:
+                return True
+        return False
+
+
     def __str__(self):
-        return f"{self.code} {self.description} {self.durations} {self.predecessors}"
+        return f"{self.code}"
     
     def __repr__(self):
         return f"{self.code}"
@@ -111,42 +124,122 @@ class Project:
             description = row[2]
             durations = eval(str(row[3])) # Convert string to list of integers, if it is None, then the list is (0, 0, 0)
             durations = (0, 0, 0) if durations is None else durations
-            predecessors = str(row[4]).split(", ") # Convert string to list of strings, if it is None, then the list is empty
-            predecessors = [] if predecessors is None else predecessors
-            task = Task(code, description, durations, predecessors)
-            tasks.append(task)
+            predecessors = [] if row[4] is None else row[4].split(", ")
+            if type == "Task" or type == "Gate":
+                tasks.append(Task(code, description, durations, predecessors))
+        # Convert the predecessors from a list of codes to a list of tasks
         for task in tasks:
             new_predecessors = []
             for comparing_task in tasks:
                 if comparing_task.code in task.predecessors:
                     new_predecessors.append(comparing_task)
-                    comparing_task.successors.append(task)
+                    comparing_task.add_successor(task)
             task.predecessors = new_predecessors
         self.tasks = tasks
         wb.close()
 
     
-    def print_tasks(self):
-        for task in self.tasks:
-            print(task.code, task.description, task.durations, task.predecessors, task.successors)
 
-    # Find the early start and completion dates of each task
+
+    def print_project(self):
+        '''
+        Design a printer to print projects, including the list of successors of each task, their
+        early and late dates, and their criticality. Use this printer to test both the data
+        structures you designed in Task 1. and your loader.
+        '''    
+        print(f"Project: {self.name}")
+        print(f"Tasks: {self.tasks}")
+        print(f"Early completion date: {self.early_completion_date}")
+        print(f"Late completion date: {self.late_completion_date}")
+        print("Tasks:")
+        for task in self.tasks:
+            print(f"Task: {task}")
+            print(f"Description: {task.description}")
+            print(f"Predecessors: {task.predecessors}")
+            print(f"Successors: {task.successors}")
+            print(f"Duration: {task.duration}")
+            print(f"Early start date: {task.early_start_date}")
+            print(f"Early completion date: {task.early_completion_date}")
+            print(f"Late start date: {task.late_start_date}")
+            print(f"Late completion date: {task.late_completion_date}")
+            print(f"Is critical: {task.is_critical}")
+            print()
+
     def find_early_dates(self):
-        for task in self.tasks:
-            if len(task.predecessors) == 0:
-                task.early_start_date = 0
-            else:
-                task.early_start_date = max([self.get_task_by_code(predecessor).early_completion_date for predecessor in task.predecessors])
-            task.early_completion_date = task.early_start_date + task.duration    
+        '''
+        Early dates are thus calculated by propagating values from the source nodes to the
+        sink nodes. The early start date of a task is the maximum of the early completion dates of
+        its predecessors plus the task duration. The early completion date of a task is the sum of
+        its early start date and its duration.
 
+        1. Start with a list of all tasks
+        2. While it remains a task in the list,
+            a. Find a task with no predecessors
+            b. Remove it from the list
+            c. Calculate its early start date and early completion date
+        The minimum of the porject is the maximum of the early completion dates of the tasks
+        Early dates is thus calculated by propagating values from the source nodes to the sink nodes
+        '''
+        print("Finding early dates...")
+        tasks = self.tasks.copy()
+        while len(tasks) > 0:
+            for task in tasks:
+                if task.has_predecessor_in_list(tasks):
+                    continue
+                if len(task.predecessors) == 0:
+                    task.early_start_date = 0
+                    task.early_completion_date = task.early_start_date + task.duration
+                else:
+                    task.early_start_date = max([predecessor.early_completion_date for predecessor in task.predecessors])
+                    task.early_completion_date = task.early_start_date + task.duration
+                tasks.remove(task)
+        self.early_completion_date = max([task.early_completion_date for task in self.tasks])
+        print("Early dates found.")
 
         
+    def find_late_dates(self):
+        '''
+        The late completion date of a task is the minimum of the late start dates of its successors, and
+        the project duration if the task has no successors. The late start date of a task is its late
+        completion date minus its duration.
+        1. Start with a list of all tasks
+        2. While it remains a task in the list,
+            a. Find a task in the list whose all successors are not in the list
+            b. Remove it from the list
+            c. Calculate its late start date and late completion date
+        '''
+        print("Finding late dates...")
+        tasks = self.tasks.copy()
+        while len(tasks) > 0:
+            for task in tasks:
+                if task.has_successor_in_list(tasks):
+                    continue
+                if len(task.successors) == 0:
+                    task.late_completion_date = task.early_completion_date
+                    task.late_start_date = task.early_start_date
+                else:
+                    task.late_completion_date = min([successor.late_start_date for successor in task.successors])
+                    task.late_start_date = task.late_completion_date - task.duration
+                tasks.remove(task)
+                print("Removed task: ", task)
+
+
+
+    # Find the critical tasks
+    def find_critical_tasks(self):
+        for task in self.tasks:
+            if task.early_start_date == task.late_start_date and task.early_completion_date == task.late_completion_date:
+                task.is_critical = True
+            else:
+                task.is_critical = False
+            
 
 def main():
-    project = Project("Warehouse", [])
-    project.read_tasks_from_excel("Warehouse.xlsx")
-    project.print_tasks()
-
+    project = Project("Villa", [])
+    project.import_project_from_excel("Warehouse.xlsx")
+    project.find_early_dates()
+    project.find_late_dates()
+    project.print_project()
 
 
 if __name__ == "__main__":
