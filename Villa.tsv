@@ -1,0 +1,65 @@
+Types	Codes	Descriptions	Minimum durations	Expected durations	Maximum durations	Predecessors	Successors	Early start dates	Early completion dates	Late start dates	Late completion dates	Criticalities
+Gate	Start		0	0	0		A.1	0	0	0	0	True
+Task	A.1	Building Design	6	12	18	Start	A.2, A.3, A.4	0	12	0	12	True
+Task	A.2	Electrical Design	3	6	9	A.1	B.1	12	18	12	18	True
+Task	A.3	Plumbing Design	3	6	9	A.1	B.1	12	18	12	18	True
+Task	A.4	Fire System Design	2	4	6	A.1	B.1	12	16	14	18	False
+Task	B.1	Signing Project Contract	2	4	6	A.2, A.3, A.4	B.2, B.3, B.4	18	22	18	22	True
+Task	B.2	Project Permit	3	6	9	B.1	C.1	22	28	24	30	False
+Task	B.3	Electrical Permit	4	8	12	B.1	C.1	22	30	22	30	True
+Task	B.4	Plumbing Permit	3	6	9	B.1	C.1	22	28	24	30	False
+Task	C.1	Installation of Mobilization Building	4	8	12	B.2, B.3, B.4	C.2, C.3	30	38	30	38	True
+Task	C.2	Road Work	3	6	9	C.1	D.1	38	44	38	44	True
+Task	C.3	Fence Work	2	4	6	C.1	D.1	38	42	40	44	False
+Task	D.1	Clearing and Grubbing	2	4	6	C.2, C.3	D.2	44	48	44	48	True
+Task	D.2	Excavation	6	12	18	D.1	D.3	48	60	48	60	True
+Task	D.3	Filling	10	20	30	D.2	E.1	60	80	60	80	True
+Task	E.1	Pile	9	18	27	D.3	E.2, E.3	80	98	80	98	True
+Task	E.2	Concrete	10	20	30	E.1	F.1	98	118	108	128	False
+Task	E.3	Raft Foundation	15	30	45	E.1	F.1	98	128	98	128	True
+Task	F.1	Column and Curtain Wall	8	16	24	E.2, E.3	F.2, F.3, F.4, F.5	128	144	128	144	True
+Task	F.2	Slab	3	6	9	F.1	G.1	144	150	150	156	False
+Task	F.3	Slab Insulation	6	12	18	F.1	G.1	144	156	144	156	True
+Task	F.4	Masonry	3	6	9	F.1	G.1	144	150	150	156	False
+Task	F.5	Upper Slab	2	4	6	F.1	G.1	144	148	152	156	False
+Task	G.1	Column and Curtain Wall	4	8	12	F.2, F.3, F.4, F.5	G.2, G.3, G.4, G.5	156	164	156	164	True
+Task	G.2	Slab	4	8	12	G.1	H.1	164	172	164	172	True
+Task	G.3	Slab Insulation	3	6	9	G.1	H.1	164	170	166	172	False
+Task	G.4	Masonry	2	4	6	G.1	H.1	164	168	168	172	False
+Task	G.5	Upper Slab	2	4	6	G.1	H.1	164	168	168	172	False
+Task	H.1	Roof Beam Installation	4	8	12	G.2, G.3, G.4, G.5	H.2, H.3	172	180	172	180	True
+Task	H.2	Roof Installation	4	8	12	H.1	I.1, I.2, I.3	180	188	180	188	True
+Task	H.3	Roof Isolation	2	4	6	H.1	I.1, I.2, I.3	180	184	184	188	False
+Task	I.1	Installation of Electric	6	12	18	H.2, H.3	J.2, J.3	188	200	188	200	True
+Task	I.2	Installation of Plumbing	4	8	12	H.2, H.3	J.2, J.3	188	196	192	200	False
+Task	I.3	Installation of Fire System	2	4	6	H.2, H.3	J.2, J.3	188	192	196	200	False
+Task	J.1	Drywall	9	18	27	J.2, J.3	K.1	232	250	232	250	True
+Task	J.2	Interior Brick Wall	16	32	48	I.1, I.2, I.3	J.1	200	232	200	232	True
+Task	J.3	Exterior Brick Wall	14	28	42	I.1, I.2, I.3	J.1	200	228	204	232	False
+Task	K.1	Plaster (ext-int)	9	18	27	J.1	L.1, L.2, L.3, L.4, L.5, L.6, L.7	250	268	250	268	True
+Task	L.1	Travertine Coating	14	28	42	K.1	M.1	268	296	268	296	True
+Task	L.2	Marble Coating	8	16	24	K.1	M.1	268	284	280	296	False
+Task	L.3	Tile Mosaic Coating	4	8	12	K.1	M.1	268	276	288	296	False
+Task	L.4	Ceramic Coating	2	4	6	K.1	M.1	268	272	292	296	False
+Task	L.5	Epoxy	2	4	6	K.1	M.1	268	272	292	296	False
+Task	L.6	Suspended Ceiling Cover	8	16	24	K.1	M.1	268	284	280	296	False
+Task	L.7	Outer Wall Covering	12	24	36	K.1	M.1	268	292	272	296	False
+Task	M.1	Fenestration Installation	3	6	9	L.1, L.2, L.3, L.4, L.5, L.6, L.7	M.2, M.3, M.4	296	302	296	302	True
+Task	M.2	Wood Work	6	12	18	M.1	N.1	302	314	302	314	True
+Task	M.3	Aluminium Joinery	4	8	12	M.1	N.1	302	310	306	314	False
+Task	M.4	Metal Joinery	3	6	9	M.1	N.1	302	308	308	314	False
+Task	N.1	Interior Paint	4	8	12	M.2, M.3, M.4	N.2	314	322	314	322	True
+Task	N.2	Exterior Paint	9	18	27	N.1	O.1, O.2, O.3	322	340	322	340	True
+Task	O.1	Ventilation System	2	4	6	N.2	O.4, O.5	340	344	348	352	False
+Task	O.2	Clean-Waste Water	6	12	18	N.2	O.4, O.5	340	352	340	352	True
+Task	O.3	Rain Water	2	4	6	N.2	O.4, O.5	340	344	348	352	False
+Task	O.4	Mechanical Automation	2	4	6	O.1, O.2, O.3	P.1, P.2, P.3	352	356	352	356	True
+Task	O.5	Mechanical Electric Work	2	4	6	O.1, O.2, O.3	P.1, P.2, P.3	352	356	352	356	True
+Task	P.1	Fire Protection System	2	4	6	O.4, O.5	Q.1	356	360	358	362	False
+Task	P.2	Fire Detection System	3	6	9	O.4, O.5	Q.1	356	362	356	362	True
+Task	P.3	Security Lighting	2	4	6	O.4, O.5	Q.1	356	360	358	362	False
+Task	Q.1	Cleaning	2	4	6	P.1, P.2, P.3	Q.2	362	366	362	366	True
+Task	Q.2	Final Control	2	4	6	Q.1	Q.3	366	370	366	370	True
+Task	Q.3	Delivery	1	1	1	Q.2	Completion	370	371	370	371	True
+Gate	Completion		0	0	0	Q.3		371	371	371	371	True
+Project			-1	371	-1						
