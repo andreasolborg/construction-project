@@ -101,14 +101,28 @@ class Project:
     def __init__(self, name, tasks):
         self.name = name
         self.tasks = tasks
-        self.early_completion_date = 0
-        self.late_completion_date = 0 
+        self.duration = 0
+        self.shortest_duration = 0
+        self.expected_duration = 0
+        self.longest_duration = 0
 
     def get_task_by_code(self, code):
         for task in self.tasks:
             if task.code == code:
                 return task
         return None
+
+    def set_shortest_duration(self):
+        self.shortest_duration = 0
+        self.shortest_duration = self.find_early_dates("Shortest")
+
+    def set_expected_duration(self):
+        self.expected_duration = 0
+        self.expected_duration = self.find_early_dates("Expected")
+
+    def set_longest_duration(self):
+        self.longest_duration = 0
+        self.longest_duration = self.find_early_dates("Longest")
     
     def get_tasks(self):
         return self.tasks
@@ -149,8 +163,6 @@ class Project:
         '''    
         print(f"Project: {self.name}")
         print(f"Tasks: {self.tasks}")
-        print(f"Early completion date: {self.early_completion_date}")
-        print(f"Late completion date: {self.late_completion_date}")
         print("Tasks:")
         for task in self.tasks:
             print(f"Task: {task}")
@@ -163,6 +175,8 @@ class Project:
             print(f"Late start date: {task.late_start_date}")
             print(f"Late completion date: {task.late_completion_date}")
             print(f"Is critical: {task.is_critical}")
+            print()
+            print(f"Project: {self.name}")
             print()
 
     def find_early_dates(self, duration_index=None):
@@ -192,7 +206,7 @@ class Project:
                     elif duration_index == "Longest":
                         task.duration = task.durations[2]
                 # if duration_index is not None:
-                #     task.duration = task.durations[duration_index]
+                #     task.duration = task.durations[duration_index]  # 0: shortest, 1: expected, 2: longest, hvilken foretrekker du?
                 if task.has_predecessor_in_list(tasks):
                     continue
                 if len(task.predecessors) == 0:
@@ -202,9 +216,9 @@ class Project:
                     task.early_start_date = max([predecessor.early_completion_date for predecessor in task.predecessors])
                     task.early_completion_date = task.early_start_date + task.duration
                 tasks.remove(task)
-        self.early_completion_date = max([task.early_completion_date for task in self.tasks])
+        self.duration = max([task.early_completion_date for task in self.tasks])
         print("Early dates found.")
-
+        return self.duration
         
     def find_late_dates(self, duration_index=None):
         '''
@@ -240,7 +254,6 @@ class Project:
                     task.late_start_date = task.late_completion_date - task.duration
                 tasks.remove(task)
                 print("Removed task: ", task)
-        self.late_completion_date = min([task.late_completion_date for task in self.tasks])
         print("Late dates found.")
 
     # Find the critical tasks
@@ -251,15 +264,29 @@ class Project:
             else:
                 task.is_critical = False
             
+    ######################
+    # Machine Learning
+    ######################
+
+    risk_factors = [0.8, 1.0, 1.2, 1.4]
+    expected_duration =0 
+
 
 def main():
     project = Project("Villa", [])
     project.import_project_from_excel("Warehouse.xlsx")
-    project.find_early_dates("Longest")
-    project.find_late_dates("Longest")
+    project.find_early_dates("Shortest")
+    project.find_late_dates("Shortest")
     project.find_critical_tasks()
     project.print_project()
 
+    project.set_shortest_duration()
+    project.set_expected_duration()
+    project.set_longest_duration()
+
+    print("Shortest duration: ", project.shortest_duration)
+    print("Expected duration: ", project.expected_duration)
+    print("Longest duration: ", project.longest_duration)
 
 if __name__ == "__main__":
     main()
