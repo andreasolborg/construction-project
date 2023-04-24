@@ -38,8 +38,8 @@ class Task:
         self.description = description
         self.durations = durations
         self.predecessors = predecessors
-        # self.duration = random.triangular(*durations) # Randomly generate a duration from the given range of durations (min, mode, max)
-        self.duration = durations[1] # Use the mode as the duration
+        self.duration = random.triangular(*durations) # Randomly generate a duration from the given range of durations (min, mode, max)
+        # self.duration = durations[1] # Use the mode as the duration
         self.successors = []
         self.early_start_date = 0
         self.early_completion_date = 0
@@ -165,7 +165,7 @@ class Project:
             print(f"Is critical: {task.is_critical}")
             print()
 
-    def find_early_dates(self):
+    def find_early_dates(self, duration_index=None):
         '''
         Early dates are thus calculated by propagating values from the source nodes to the
         sink nodes. The early start date of a task is the maximum of the early completion dates of
@@ -184,6 +184,15 @@ class Project:
         tasks = self.tasks.copy()
         while len(tasks) > 0:
             for task in tasks:
+                if duration_index is not None:
+                    if duration_index == "Shortest":
+                        task.duration = task.durations[0]
+                    elif duration_index == "Expected":
+                        task.duration = task.durations[1]
+                    elif duration_index == "Longest":
+                        task.duration = task.durations[2]
+                # if duration_index is not None:
+                #     task.duration = task.durations[duration_index]
                 if task.has_predecessor_in_list(tasks):
                     continue
                 if len(task.predecessors) == 0:
@@ -197,7 +206,7 @@ class Project:
         print("Early dates found.")
 
         
-    def find_late_dates(self):
+    def find_late_dates(self, duration_index=None):
         '''
         The late completion date of a task is the minimum of the late start dates of its successors, and
         the project duration if the task has no successors. The late start date of a task is its late
@@ -212,6 +221,15 @@ class Project:
         tasks = self.tasks.copy()
         while len(tasks) > 0:
             for task in tasks:
+                if duration_index is not None:
+                    if duration_index == "Shortest":
+                        task.duration = task.durations[0]
+                    elif duration_index == "Expected":
+                        task.duration = task.durations[1]
+                    elif duration_index == "Longest":
+                        task.duration = task.durations[2]
+                # if duration_index is not None:
+                #     task.duration = task.durations[duration_index]
                 if task.has_successor_in_list(tasks):
                     continue
                 if len(task.successors) == 0:
@@ -222,8 +240,8 @@ class Project:
                     task.late_start_date = task.late_completion_date - task.duration
                 tasks.remove(task)
                 print("Removed task: ", task)
-
-
+        self.late_completion_date = min([task.late_completion_date for task in self.tasks])
+        print("Late dates found.")
 
     # Find the critical tasks
     def find_critical_tasks(self):
@@ -237,8 +255,9 @@ class Project:
 def main():
     project = Project("Villa", [])
     project.import_project_from_excel("Warehouse.xlsx")
-    project.find_early_dates()
-    project.find_late_dates()
+    project.find_early_dates("Longest")
+    project.find_late_dates("Longest")
+    project.find_critical_tasks()
     project.print_project()
 
 
