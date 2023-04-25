@@ -31,8 +31,7 @@ Late completion date | 0 | 4 | 9 | 8 | 10 | 6 | 10 | 12 | 16 | 16 | 17 | 17
 '''
 import random
 from openpyxl import load_workbook
-import networkx as nx
-import matplotlib.pyplot as plt
+import statistics
 
 class Task:
     def __init__(self, code, description, durations, predecessors, r=1):  # r is the risk factor, default is 1 (no risk). May be more dynamic in the future
@@ -305,28 +304,28 @@ def make_samples(n):
         samples_with_risk_factor[risk_factor] = sample_with_risk_factor
     return samples_with_risk_factor
 
-def perform_statistics(samples):
+def perform_statistics(samples_with_risk_factor):
     '''
     Perform statistics on these durations (minimum, maximum,
     mean, standard-deviation, deciles), as well as on the numbers of successful, acceptable
     and failed projects.
     '''
-    # Calculate the actual duration of the project
-    #     successfull_samples = 0
-    #     acceptable_samples = 0
-    #     failed_samples = 0
-    #     classification = sample.classification
-    #     if classification == "Success":
-    #         successfull_samples += 1
-    #     elif classification == "Acceptable":
-    #         acceptable_samples += 1
-    #     else:
-    #         failed_samples += 1
-    # print(f"Successfull samples: {successfull_samples}")
-    # print(f"Acceptable samples: {acceptable_samples}")
-    # print(f"Failed samples: {failed_samples}")
-
-    return samples
+    for risk_factor in samples_with_risk_factor:
+        samples = samples_with_risk_factor[risk_factor]
+        durations = [sample.duration for sample in samples]
+        classifications = [sample.classification for sample in samples]
+        print("Risk factor: ", risk_factor)
+        # print("Durations: ", durations)
+        # print("Classifications: ", classifications)
+        print("Minimum duration: ", min(durations))
+        print("Maximum duration: ", max(durations))
+        print("Mean duration: ", sum(durations)/len(durations))
+        print("Standard deviation: ", statistics.stdev(durations))
+        print("Deciles: ", statistics.quantiles(durations, n=10))
+        print("Number of successes: ", classifications.count("Success"))
+        print("Number of acceptables: ", classifications.count("Acceptable"))
+        print("Number of failures: ", classifications.count("Failure"))
+        print("")
 
         
 
@@ -351,8 +350,8 @@ def main():
     # print("Expected duration: ", project.expected_duration)
     # print("Longest duration: ", project.longest_duration)
 
-    samples = make_samples(10)
-    print(samples)
+    samples = make_samples(1000)
+    perform_statistics(samples)
 
 if __name__ == "__main__":
     main()
