@@ -35,3 +35,11 @@ Attributes:
 early completion date = duration
 
 late start date 
+
+
+
+classificiation results to aim for
+0.8 = 980 success
+1.0 = 800 success
+1.2 = 200 success
+1.4 = 20 success

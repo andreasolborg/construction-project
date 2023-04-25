@@ -38,9 +38,15 @@ class Task:
     def __init__(self, code, description, durations, predecessors, r=1):  # r is the risk factor, default is 1 (no risk). May be more dynamic in the future
         self.code = code
         self.description = description
-        durations = self.update_durations_with_risk_factor(r, durations)  # Update the durations with the risk factor, First in task 2.2 in the assignment
-        self.duration = random.triangular(*durations) # Randomly generate a duration from the given range of durations (min, mode, max)
+
         self.durations = durations
+        durations_updated = self.update_durations_with_risk_factor(r, durations)  # Update the durations with the risk factor, First in task 2.2 in the assignment
+        self.duration = random.triangular(*durations_updated) # Randomly generate a duration from the given range of durations (min, mode, max)
+
+        # print()
+        # print(self.duration)
+        # print(self.durations[1])
+        # print()
 
         self.predecessors = predecessors
         # self.duration = durations[1] # Use the mode as the duration
@@ -99,7 +105,7 @@ class Task:
 
 
 class Project:
-    def __init__(self, tasks, r=1):
+    def __init__(self, tasks, r):
         self.tasks = tasks
         self.duration = 0
         self.shortest_duration = 0
@@ -132,6 +138,10 @@ class Project:
     
     def get_tasks(self):
         return self.tasks
+    
+    def __repr__(self):
+        return f"{self.classification}"
+
     
     # Read the tasks from an excel file
     def import_project_from_excel(self, filename):
@@ -259,7 +269,6 @@ class Project:
         Acceptable: The actual duration of the project stands between 105% and 115% of the expected duration (with a risk factor of 1.0)
         Failure: The actual duration of the project exceeds its expected duration by more than 15% (with a risk factor of 1.0)
         '''
-
         # Calculate the actual duration of the project
         actual_duration = self.duration
         # Calculate the expected duration of the project
@@ -271,7 +280,6 @@ class Project:
             self.classification = "Acceptable"
         else:
             self.classification = "Failure"
-        print(f"Classification: {self.classification}")
         return self.classification
     
     
@@ -283,20 +291,45 @@ Make at random a sample 1000 of values of durations for each value of the risk f
 Calculate the duration of the project for each of the 1000 samples.
 '''
 def make_samples(n):
-    risk_factors = [0.8, 1.2]
-    samples = []
+    risk_factors = [0.8, 1.0, 1.2, 1.4]
+    samples_with_risk_factor = {}
     for risk_factor in risk_factors:
-        sample = []
+        sample_with_risk_factor = []
         for i in range(n):
             project = Project([], risk_factor)
             project.import_project_from_excel("Villa.xlsx")
             project.set_expected_duration()
             project.find_early_dates()
             project.classify_project()
-            print()
-            sample.append(project.duration)
-        samples.append(sample)
+            sample_with_risk_factor.append(project)
+        samples_with_risk_factor[risk_factor] = sample_with_risk_factor
+    return samples_with_risk_factor
+
+def perform_statistics(samples):
+    '''
+    Perform statistics on these durations (minimum, maximum,
+    mean, standard-deviation, deciles), as well as on the numbers of successful, acceptable
+    and failed projects.
+    '''
+    # Calculate the actual duration of the project
+    #     successfull_samples = 0
+    #     acceptable_samples = 0
+    #     failed_samples = 0
+    #     classification = sample.classification
+    #     if classification == "Success":
+    #         successfull_samples += 1
+    #     elif classification == "Acceptable":
+    #         acceptable_samples += 1
+    #     else:
+    #         failed_samples += 1
+    # print(f"Successfull samples: {successfull_samples}")
+    # print(f"Acceptable samples: {acceptable_samples}")
+    # print(f"Failed samples: {failed_samples}")
+
     return samples
+
+        
+
     
 
 def main():
@@ -318,9 +351,8 @@ def main():
     # print("Expected duration: ", project.expected_duration)
     # print("Longest duration: ", project.longest_duration)
 
-    samples = make_samples(200)
+    samples = make_samples(10)
     print(samples)
-
 
 if __name__ == "__main__":
     main()

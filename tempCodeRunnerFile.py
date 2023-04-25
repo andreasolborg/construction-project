@@ -1,2 +1,4 @@
-for i in range(len(durations)):
-                durations[i] = float(durations[i])
+        # print()
+        # print(self.duration)
+        # print(self.durations[1])
+        # print()
