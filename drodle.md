@@ -87,3 +87,8 @@ Deciles:  [406.3211377813569, 414.5911477148662, 418.5732306340709, 422.49660947
 Number of successes:  16
 Number of acceptables:  479
 Number of failures:  505
+
+
+
+Tanke:
+Vi driter i å lage en fyskisk gate. Vi bare trener modellen opp på ulike slicinger av dataen.

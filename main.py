@@ -33,6 +33,8 @@ import random
 from openpyxl import load_workbook
 import statistics
 import pandas as pd
+from sklearn import linear_model, metrics, svm, tree
+from sklearn.model_selection import train_test_split
 
 class Task:
     def __init__(self, type, code, description, durations, predecessors, r=1):  # r is the risk factor, default is 1 (no risk). May be more dynamic in the future
@@ -340,12 +342,32 @@ def write_to_csv(samples_with_risk_factor):
             task_duration += task.duration
             tasks.append(task_duration)
         tasks.append(sample.classification)
-        tasks.append(random_risk_factor)
         samples_to_save.append(tasks)
-        df = pd.DataFrame(samples_to_save)
-        df.to_csv("samples.csv", mode="a", header=False, index=False)
+        #Overwrite the file if it already exists
+        pd.DataFrame(samples_to_save).to_csv("samples.csv", mode='a', header=False, index=False)
 
-        
+
+def machine_learning():
+    '''
+    Perform machine learning on the csv file. Use the first 80% of the samples to train the model and the last 20% to test the model.
+    Use SVM and Random Forest.
+    '''
+    # Read the csv file
+    df = pd.read_csv("samples.csv", header=None)
+    # Split the data into features and labels
+    X = df.iloc[:, :-30].values
+    y = df.iloc[:, -1].values
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    # Split the data into training and test sets
+    model = linear_model.LogisticRegression()
+    model.fit(X_train, y_train)
+    predictions = model.predict(X_test)
+    print("Accuracy: ", metrics.accuracy_score(y_test, predictions))
+    print("Precision: ", metrics.precision_score(y_test, predictions, average='macro'))
+
+
+
 def perform_statistics(samples_with_risk_factor):
     '''
     Perform statistics on these durations (minimum, maximum,
@@ -392,10 +414,14 @@ def main():
     # print("Expected duration: ", project.expected_duration)
     # print("Longest duration: ", project.longest_duration)
 
-    samples = make_samples(10)
+    samples = make_samples(300)
     # perform_statistics(samples)
 
     write_to_csv(samples)
+
+    machine_learning()
+
+
 
 if __name__ == "__main__":
     main()
