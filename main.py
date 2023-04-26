@@ -32,11 +32,13 @@ Late completion date | 0 | 4 | 9 | 8 | 10 | 6 | 10 | 12 | 16 | 16 | 17 | 17
 import random
 from openpyxl import load_workbook
 import statistics
+import pandas as pd
 
 class Task:
-    def __init__(self, code, description, durations, predecessors, r=1):  # r is the risk factor, default is 1 (no risk). May be more dynamic in the future
+    def __init__(self, type, code, description, durations, predecessors, r=1):  # r is the risk factor, default is 1 (no risk). May be more dynamic in the future
         self.code = code
         self.description = description
+        self.type = type
 
         self.durations = durations
         durations_updated = self.update_durations_with_risk_factor(r, durations)  # Update the durations with the risk factor, First in task 2.2 in the assignment
@@ -157,7 +159,7 @@ class Project:
 
             predecessors = [] if row[4] is None else row[4].split(", ")
             if type == "Task" or type == "Gate":
-                tasks.append(Task(code, description, durations, predecessors, self.r)) # takes in r from the project as a default value to be used in the task
+                tasks.append(Task(type, code, description, durations, predecessors, self.r)) # takes in r from the project as a default value to be used in the task
         # Convert the predecessors from a list of codes to a list of tasks
         for task in tasks:
             new_predecessors = []
@@ -281,6 +283,24 @@ class Project:
             self.classification = "Failure"
         return self.classification
     
+
+    #WIP. I consider we do not add a gate to the project at all, but just do machine learning on the dataset.
+    def add_gate(self, code, description, predecessors):
+        predecessors = [self.tasks[predecessor] for predecessor in predecessors]
+        successors = predecessors[0].successors
+
+        # Clear the successors of the predecessors
+        for predecessor in predecessors:
+            predecessor.successors = []
+
+        # Create the gate
+        gate = Task(type="Gate", code=code, description=description, durations=[0, 0, 0], predecessors=predecessors)
+        self.tasks.append(gate)
+
+        for successor in successors:
+            self.predecessors = []
+            gate.add_successor(successor)
+    
     
 
 
@@ -301,9 +321,31 @@ def make_samples(n):
             project.find_early_dates()
             project.classify_project()
             sample_with_risk_factor.append(project)
+
         samples_with_risk_factor[risk_factor] = sample_with_risk_factor
     return samples_with_risk_factor
 
+def write_to_csv(samples_with_risk_factor):
+    '''
+    Takes in a dictionary with risk factors as keys and a list of samples as values. Randomly choose a sample from each risk factor and write it to a csv file.
+    '''
+    amount_of_samples = len(samples_with_risk_factor[0.8]) # Randomly choose a sample from each risk factor
+    for i in range(amount_of_samples):
+        random_risk_factor = random.choice(list(samples_with_risk_factor.keys()))
+        sample = samples_with_risk_factor[random_risk_factor][i]
+        samples_to_save = []
+        tasks = []
+        task_duration = 0
+        for task in sample.tasks[1:-1]: # Exclude the first and last task
+            task_duration += task.duration
+            tasks.append(task_duration)
+        tasks.append(sample.classification)
+        tasks.append(random_risk_factor)
+        samples_to_save.append(tasks)
+        df = pd.DataFrame(samples_to_save)
+        df.to_csv("samples.csv", mode="a", header=False, index=False)
+
+        
 def perform_statistics(samples_with_risk_factor):
     '''
     Perform statistics on these durations (minimum, maximum,
@@ -332,14 +374,14 @@ def perform_statistics(samples_with_risk_factor):
     
 
 def main():
-    # project = Project([], 1.0)
-    # project.import_project_from_excel("Villa.xlsx")
-    # project.find_early_dates()
-    # project.find_late_dates()
-    # project.find_critical_tasks()
-    # # project.print_project()
-    # # project.print_project()
-    # print(project.duration, "project duration")
+    project = Project([], 1.0)
+    project.import_project_from_excel("Villa.xlsx")
+    project.find_early_dates(1)
+    project.find_late_dates(1)
+    project.find_critical_tasks()
+    project.print_project()
+    # project.print_project()
+    print(project.duration, "project duration")
 
     # project.set_shortest_duration()
     # project.set_expected_duration()
@@ -350,8 +392,10 @@ def main():
     # print("Expected duration: ", project.expected_duration)
     # print("Longest duration: ", project.longest_duration)
 
-    samples = make_samples(1000)
-    perform_statistics(samples)
+    samples = make_samples(10)
+    # perform_statistics(samples)
+
+    write_to_csv(samples)
 
 if __name__ == "__main__":
     main()
