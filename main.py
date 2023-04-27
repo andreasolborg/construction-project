@@ -76,6 +76,7 @@ class Task:
         durations = (a, e_new, b)
         return durations
 
+    #
     def add_predecessor(self, predecessor):
         self.predecessors.append(predecessor)
         predecessor.successors.append(self)
@@ -222,7 +223,7 @@ class Project:
                     continue
                 if len(task.predecessors) == 0:
                     task.early_start_date = 0
-                    task.early_completion_date = task.early_start_date + task.duration
+                    task.early_completion_date = task.early_start_date + task.duration #JON: hvorfor tar ikke denne hensyn til duration_index?
                 else:
                     task.early_start_date = max([predecessor.early_completion_date for predecessor in task.predecessors])
                     if duration_index is not None:
@@ -290,10 +291,13 @@ class Project:
     
 
     #WIP. I consider we do not add a gate to the project at all, but just do machine learning on the dataset.
+    # JON: Vi må ha en gate ellers gir ikke oppgaven mening? 
+    # Vi skal bruke en gate/checkpoint/milestone for å kunne bruke machinelæring til å finne ut om prosjektet blir forsinket eller ikke før prosjektet er ferdig
+    # Nå bruker vi machinelæring til å finne ut om prosjektet blir forsinket eller ikke etter at prosjektet er ferdig, og dette har vi allerede en helt nøyaktig funksjon for
     def add_gate(self, code, description, predecessors):
         predecessors = [self.tasks[predecessor] for predecessor in predecessors]
         successors = predecessors[0].successors
-
+        
         # Clear the successors of the predecessors
         for predecessor in predecessors:
             predecessor.successors = []
@@ -411,13 +415,16 @@ def perform_statistics(samples_with_risk_factor):
 
 def main():
     project = Project([], 1.0)
+   
     project.import_project_from_excel("Villa.xlsx")
-    project.find_early_dates(1)
-    project.find_late_dates(1)
-    project.find_critical_tasks()
+    
+  
+    #project.find_early_dates(1)
+    #project.find_late_dates(1)
+    #project.find_critical_tasks()
     # project.print_project()
     # project.print_project()
-    print(project.duration, "project duration")
+    #print(project.duration, "project duration")
 
     # project.set_shortest_duration()
     # project.set_expected_duration()
