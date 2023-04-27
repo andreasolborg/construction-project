@@ -12,14 +12,17 @@ def main():
     
 
     project.import_project_from_excel("Villa.xlsx")
+    project.add_gate("Test_Gate", "Test gate", ["H.2", "H.3"])
     
-    # project.draw_pert_diagram("VillaPERTDiagram")
 
     project.find_early_dates(1)
     project.find_late_dates(1)
     project.set_is_critical_for_all_tasks()
     project.print_project()
 
+
+
+    project.draw_pert_diagram("VillaPERTDiagram")
     # print(project.duration, "project duration")
 
     # project.set_shortest_duration()

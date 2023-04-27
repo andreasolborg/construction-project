@@ -13,12 +13,6 @@ class Project:
         self.classification = None
         self.r = r
 
-    def get_task_by_code(self, code): # Is not used
-        for task in self.tasks:
-            if task.code == code:
-                return task
-        return None
-
     def set_shortest_duration(self):
         self.shortest_duration = self.find_early_dates(0)
 
@@ -31,6 +25,15 @@ class Project:
     def get_tasks(self):
         return self.tasks
     
+    def get_task_by_code(self, code):
+        for task in self.tasks:
+            if task.code == code:
+                return task
+        return None
+    
+    def add_task(self, task):
+        self.tasks.append(task)
+    
     def __repr__(self):
         return f"{self.classification}"
     
@@ -38,13 +41,33 @@ class Project:
     def set_is_critical_for_all_tasks(self):
         for task in self.tasks:
             task.set_is_critical()
+
+        
+
+    def add_gate(self, code, description, list_of_predecessors):
+        predecessors = [self.get_task_by_code(predecessor) for predecessor in list_of_predecessors]
+        successors = predecessors[0].successors
+        
+        for predecessor in predecessors:
+            # Clear the successors of the predecessors
+            predecessor.successors = []
+
+        # Create the new gate
+        gate = Task("Gate", code, description, [0, 0, 0], predecessors, self.r)
+        self.add_task(gate)
+
+        for successor in successors:
+            # Clear the predecessors of the successors
+            successor.predecessors = []
+            # Add the new gate as predecessor to the successors
+            successor.add_predecessor(gate)
+
         
     def write_task(self, dot_file):
         for task in self.tasks:
             dot_file.write('{} [label="{}"];\n'.format(str(id(task)), str(task.code)))
             for predecessor in task.predecessors:
                 dot_file.write('{} -> {};\n'.format(str(id(predecessor)), str(id(task))))
-
 
     def draw_pert_diagram(self, filename):
         print("Saving graph to file {}".format(filename)) # print to console
@@ -96,8 +119,6 @@ class Project:
         wb.save(filename)
         wb.close()
 
-
-
     def print_project(self):
         print(f"Tasks: {self.tasks}")
         print("Tasks:")
@@ -114,8 +135,7 @@ class Project:
             print(f"Is critical: {task.is_critical}")
             print()
 
-    def find_early_dates(self, duration_index=None):
-        
+    def find_early_dates(self, duration_index=None): 
         '''
         Early dates are thus calculated by propagating values from the source nodes to the
         sink nodes. The early start date of a task is the maximum of the early completion dates of
@@ -191,8 +211,15 @@ class Project:
 def main():
     project = Project(1.0)
     project.import_project_from_excel("Villa.xlsx")
+    # project.add_gate("Test_Gate", "Test gate", ["H.2", "H.3"])
     project.find_early_dates()
     project.find_late_dates()
+    project.set_expected_duration()
+    project.set_shortest_duration()
+    project.set_longest_duration()
+
+    # Add a gate at the end of the project
+
     project.set_is_critical_for_all_tasks()
     project.classify_project()
     project.export_project_to_excel("Villa_output_TD.xlsx")

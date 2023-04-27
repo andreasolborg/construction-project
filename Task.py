@@ -51,7 +51,8 @@ class Task:
         return False
     
     def set_is_critical(self):
-        if self.early_completion_date == self.late_completion_date:
+        # A task is critical if its early start date is equal to its late start date
+        if self.early_start_date == self.late_start_date:
             self.is_critical = True
         else:
             self.is_critical = False
