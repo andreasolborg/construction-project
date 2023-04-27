@@ -49,6 +49,13 @@ class Task:
             if task in self.successors:
                 return True
         return False
+    
+    def set_is_critical(self):
+        if self.early_completion_date == self.late_completion_date:
+            self.is_critical = True
+        else:
+            self.is_critical = False
+        return self.is_critical
 
     def __str__(self):
         return f"{self.code}"

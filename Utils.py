@@ -7,7 +7,7 @@ import pandas as pd
 
 
 class Utils:
-    def make_samples(n):
+    def make_samples(self, n):
         '''
         Make at random a sample n of values of durations for each value of the risk factor.
         '''
@@ -16,7 +16,7 @@ class Utils:
         for risk_factor in risk_factors:
             sample_with_risk_factor = []
             for i in range(n):
-                project = Project([], risk_factor)
+                project = Project(risk_factor)
                 project.import_project_from_excel("Villa.xlsx")
                 project.set_expected_duration()
                 project.find_early_dates()
@@ -26,7 +26,7 @@ class Utils:
             samples_with_risk_factor[risk_factor] = sample_with_risk_factor
         return samples_with_risk_factor
 
-    def write_to_csv(samples_with_risk_factor):
+    def write_to_csv(self, samples_with_risk_factor):
         '''
         Takes in a dictionary with risk factors as keys and a list of samples as values. Randomly choose a sample from each risk factor and write it to a csv file.
         '''
@@ -36,9 +36,8 @@ class Utils:
             sample = samples_with_risk_factor[random_risk_factor][i]
             samples_to_save = []
             tasks = []
-            task_duration = 0
             for task in sample.tasks[1:-1]: # Exclude the first and last task
-                task_duration += task.duration
+                task_duration = task.duration
                 tasks.append(task_duration)
             tasks.append(sample.classification)
             samples_to_save.append(tasks)
@@ -46,7 +45,8 @@ class Utils:
             pd.DataFrame(samples_to_save).to_csv("samples.csv", mode='a', header=False, index=False)
 
 
-    def perform_statistics(samples_with_risk_factor):
+
+    def perform_statistics(self, samples_with_risk_factor):
         '''
         Perform statistics on these durations (minimum, maximum,
         mean, standard-deviation, deciles), as well as on the numbers of successful, acceptable

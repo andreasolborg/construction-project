@@ -1,5 +1,5 @@
 import os
-from openpyxl import load_workbook
+from openpyxl import load_workbook, Workbook
 from Task import *
 
 
@@ -37,12 +37,8 @@ class Project:
     # Find the critical tasks. A task is critical if its early and late dates are equal.
     def set_is_critical_for_all_tasks(self):
         for task in self.tasks:
-            if task.early_start_date and task.early_completion_date and task.late_start_date and task.late_completion_date:
-                if task.early_start_date == task.late_start_date and task.early_completion_date == task.late_completion_date:
-                    task.is_critical = True
-                else:
-                    task.is_critical = False
-
+            task.set_is_critical()
+        
     def write_task(self, dot_file):
         for task in self.tasks:
             dot_file.write('{} [label="{}"];\n'.format(str(id(task)), str(task.code)))
@@ -61,7 +57,7 @@ class Project:
             dot_file.write('rankdir=LR;\ncenter=true;\n')
             self.write_task(dot_file) # print the first task
             dot_file.write("}\n")
-        os.system("dot -Tpng -Gdpi=100 {}.dot -o {}.png".format(filename, filename)) # create png from dot file
+        os.system("dot -Tpng -Gdpi=500 {}.dot -o {}.png".format(filename, filename)) # create png from dot file
 
     # Read the tasks from an excel file
     def import_project_from_excel(self, filename):
@@ -91,6 +87,17 @@ class Project:
         self.tasks = tasks
         wb.close()
 
+    def export_project_to_excel(self, filename):
+        wb = Workbook()
+        ws = wb.active
+        ws.append(["Type", "Code", "Description", "Min. duration", "Most likely duration", "Max. duration", "Predecessors", "Successors", "Early start date", "Early completion date", "Late start date", "Late completion date", "Is critical"])
+        for task in self.tasks:
+            ws.append([task.type, task.code, task.description, task.list_of_durations[0], task.list_of_durations[1], task.list_of_durations[2], ", ".join([t.code for t in task.predecessors]), ", ".join([t.code for t in task.successors]), task.early_start_date, task.early_completion_date, task.late_start_date, task.late_completion_date, task.is_critical])
+        wb.save(filename)
+        wb.close()
+
+
+
     def print_project(self):
         print(f"Tasks: {self.tasks}")
         print("Tasks:")
@@ -99,7 +106,7 @@ class Project:
             print(f"Description: {task.description}")
             print(f"Predecessors: {task.predecessors}")
             print(f"Successors: {task.successors}")
-            print(f"Duration: {task.duration}")
+            print(f"Durations: {task.duration}")
             print(f"Early start date: {task.early_start_date}")
             print(f"Early completion date: {task.early_completion_date}")
             print(f"Late start date: {task.late_start_date}")
@@ -132,7 +139,6 @@ class Project:
                     continue
                 if len(task.predecessors) == 0:
                     task.early_start_date = 0
-    
                     if duration_index is not None:
                         task.early_completion_date = task.early_start_date + task.list_of_durations[duration_index]
                     else:
@@ -180,3 +186,16 @@ class Project:
         else:
             self.classification = "Failure"
         return self.classification
+    
+
+def main():
+    project = Project(1.0)
+    project.import_project_from_excel("Villa.xlsx")
+    project.find_early_dates()
+    project.find_late_dates()
+    project.set_is_critical_for_all_tasks()
+    project.classify_project()
+    project.export_project_to_excel("Villa_output_TD.xlsx")
+
+if __name__ == "__main__":
+    main()

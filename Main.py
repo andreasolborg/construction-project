@@ -11,14 +11,14 @@ def main():
     project = Project(1.0)
     
 
-    project.import_project_from_excel("Warehouse.xlsx")
+    project.import_project_from_excel("Villa.xlsx")
     
-    project.draw_pert_diagram("test2")
+    # project.draw_pert_diagram("VillaPERTDiagram")
 
-    #project.find_early_dates(1)
-    #project.find_late_dates(1)
-    #project.set_is_critical_for_all_tasks()
-    #project.print_project()
+    project.find_early_dates(1)
+    project.find_late_dates(1)
+    project.set_is_critical_for_all_tasks()
+    project.print_project()
 
     # print(project.duration, "project duration")
 
@@ -31,10 +31,10 @@ def main():
     # print("Expected duration: ", project.expected_duration)
     # print("Longest duration: ", project.longest_duration)
 
-    # samples = utils.make_samples(1000)
+    # samples = utils.make_samples(10)
     # perform_statistics(samples)
-
-    # write_to_csv(samples)
+    samples = {0.8: [project]}
+    utils.write_to_csv(samples)
 
     # ml.run_classification_methods()
     #ml.run_regression_methods()
