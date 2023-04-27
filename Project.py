@@ -115,13 +115,13 @@ class Project:
                     task.early_start_date = 0
     
                     if duration_index is not None:
-                        task.early_completion_date = task.early_start_date + task.durations[duration_index]
+                        task.early_completion_date = task.early_start_date + task.list_of_durations[duration_index]
                     else:
                         task.early_completion_date = task.early_start_date + task.duration
                 else:
                     task.early_start_date = max([predecessor.early_completion_date for predecessor in task.predecessors])
                     if duration_index is not None:
-                        task.early_completion_date = task.early_start_date + task.durations[duration_index]
+                        task.early_completion_date = task.early_start_date + task.list_of_durations[duration_index]
                     else:
                         task.early_completion_date = task.early_start_date + task.duration
                 tasks.remove(task)
@@ -142,7 +142,7 @@ class Project:
                 else:
                     task.late_completion_date = min([successor.late_start_date for successor in task.successors])
                     if duration_index is not None:
-                        task.late_start_date = task.late_completion_date - task.durations[duration_index]
+                        task.late_start_date = task.late_completion_date - task.list_of_durations[duration_index]
                     else:
                         task.late_start_date = task.late_completion_date - task.duration
                 tasks.remove(task)

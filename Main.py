@@ -14,10 +14,10 @@ def main():
     project.import_project_from_excel("Warehouse.xlsx")
     
   
-    #project.find_early_dates()
-    #project.find_late_dates()
-    #project.find_critical_tasks()
-    #project.print_project()
+    project.find_early_dates(1)
+    project.find_late_dates(1)
+    project.find_critical_tasks()
+    project.print_project()
 
     #print(project.duration, "project duration")
 
@@ -35,8 +35,8 @@ def main():
 
     # write_to_csv(samples)
 
-    ml.run_classification_methods()
-    ml.run_regression_methods()
+    #ml.run_classification_methods()
+    #ml.run_regression_methods()
 
 
 main()
