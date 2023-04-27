@@ -13,7 +13,7 @@ def main():
 
     project.import_project_from_excel("Warehouse.xlsx")
     
-    project.save_tree("test")
+    project.draw_pert_diagram("test2")
 
     #project.find_early_dates(1)
     #project.find_late_dates(1)
@@ -36,7 +36,7 @@ def main():
 
     # write_to_csv(samples)
 
-    ml.run_classification_methods()
+    # ml.run_classification_methods()
     #ml.run_regression_methods()
 
 

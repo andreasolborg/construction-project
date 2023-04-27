@@ -43,16 +43,14 @@ class Project:
                 else:
                     task.is_critical = False
 
-    def print_task(self, task, dot_file):
-        dot_file.write('{} [label="{}", style="filled", fontsize="60pt"];\n'.format(str(id(task)), str(task.code))) # write node
-        for sucessor_task in task.successors:
-                # if number of games inside the node is less than given threshold, we do not want to plot any children
-                dot_file.write('{} [label="{}", style="filled", fontsize="60pt"];\n'.format(str(id(sucessor_task)), str(sucessor_task.code))) # write node
-                dot_file.write('{} -> {} [fontsize="60pt" arrowsize="3"];\n'.format(str(id(task)), str(id(sucessor_task)))) # write edge 
-                self.print_task(sucessor_task, dot_file) # recursive call to print child nodes
+    def write_task(self, dot_file):
+        for task in self.tasks:
+            dot_file.write('{} [label="{}"];\n'.format(str(id(task)), str(task.code)))
+            for predecessor in task.predecessors:
+                dot_file.write('{} -> {};\n'.format(str(id(predecessor)), str(id(task))))
 
 
-    def save_tree(self, filename):
+    def draw_pert_diagram(self, filename):
         print("Saving graph to file {}".format(filename)) # print to console
         if os.path.exists("{}.dot".format(filename)): # if file already exists, delete it
             os.remove("{}.dot".format(filename))
@@ -60,10 +58,10 @@ class Project:
             os.remove("{}.png".format(filename))
         with open("{}.dot".format(filename), "w") as dot_file: 
             dot_file.write("digraph G {\n")
-            dot_file.write('rankdir=LR;\ncenter=true;\nsize="10,7"\n')
-            self.print_task(self.tasks[0], dot_file) # recursive call to print nodes
+            dot_file.write('rankdir=LR;\ncenter=true;\n')
+            self.write_task(dot_file) # print the first task
             dot_file.write("}\n")
-        os.system("dot -Tpng -Gdpi=500 {}.dot -o {}.png".format(filename, filename)) # create png from dot file
+        os.system("dot -Tpng -Gdpi=100 {}.dot -o {}.png".format(filename, filename)) # create png from dot file
 
     # Read the tasks from an excel file
     def import_project_from_excel(self, filename):

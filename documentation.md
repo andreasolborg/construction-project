@@ -8,6 +8,5 @@ The Project class also has a loader for Excel spreadsheets for importing project
 
 The Project class also has a printer function that prints sufficient information about each task in the project. Running this function with the Warehouse project gives output that matches the output in the assignment description. 
 
-
 ## Task 4
 The Project class has a function for classifying if a project was Success, Acceptable or a Failure. This function is used in Utils.py in the make_samples(n) function, which creates n samples for each risk factor. The function returns a dictionary with risk factor as key, and a list of the projects as value. The returned dictionary can be used as input to the perform_statistics(samples_with_risk_factor) function, which will print the statistics of the samples for each risk factor.
