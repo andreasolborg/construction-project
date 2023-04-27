@@ -11,7 +11,7 @@ class Project:
         self.classification = None
         self.r = r
 
-    def get_task_by_code(self, code):
+    def get_task_by_code(self, code): # Is not used
         for task in self.tasks:
             if task.code == code:
                 return task

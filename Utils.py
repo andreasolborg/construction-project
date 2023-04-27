@@ -4,15 +4,13 @@ import statistics
 import pandas as pd
 
    
-'''
-Make at random a sample 1000 of values of durations for each value of the risk factor.
-Calculate the duration of the project for each of the 1000 samples.
-'''
+
 
 class Utils:
-
-
     def make_samples(n):
+        '''
+        Make at random a sample n of values of durations for each value of the risk factor.
+        '''
         risk_factors = [0.8, 1.0, 1.2, 1.4]
         samples_with_risk_factor = {}
         for risk_factor in risk_factors:
