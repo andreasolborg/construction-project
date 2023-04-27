@@ -18,28 +18,29 @@ class Project:
         return None
 
     def set_shortest_duration(self):
-        self.shortest_duration = 0
         self.shortest_duration = self.find_early_dates(0)
 
     def set_expected_duration(self):
-        self.expected_duration = 0
         self.expected_duration = self.find_early_dates(1)
 
     def set_longest_duration(self):
-        self.longest_duration = 0
         self.longest_duration = self.find_early_dates(2)
-    
-    def set_random_duration(self):  # May be removed later
-        self.random_duration = 0
-        self.random_duration = self.find_early_dates()
     
     def get_tasks(self):
         return self.tasks
     
     def __repr__(self):
         return f"{self.classification}"
-
     
+    # Find the critical tasks. A task is critical if its early and late dates are equal.
+    def set_is_critical_for_all_tasks(self):
+        for task in self.tasks:
+            if task.early_start_date and task.early_completion_date and task.late_start_date and task.late_completion_date:
+                if task.early_start_date == task.late_start_date and task.early_completion_date == task.late_completion_date:
+                    task.is_critical = True
+                else:
+                    task.is_critical = False
+
     # Read the tasks from an excel file
     def import_project_from_excel(self, filename):
         wb = load_workbook(filename)
@@ -56,6 +57,7 @@ class Project:
             predecessors = [] if row[4] is None else row[4].split(", ")
             if type == "Task" or type == "Gate":
                 tasks.append(Task(type, code, description, durations, predecessors, self.r)) # takes in r from the project as a default value to be used in the task
+        
         # Convert the predecessors from a list of codes to a list of tasks
         for task in tasks:
             new_predecessors = []
@@ -68,11 +70,6 @@ class Project:
         wb.close()
 
     def print_project(self):
-        '''
-        Design a printer to print projects, including the list of successors of each task, their
-        early and late dates, and their criticality. Use this printer to test both the data
-        structures you designed in Task 1. and your loader.
-        '''    
         print(f"Tasks: {self.tasks}")
         print("Tasks:")
         for task in self.tasks:
@@ -89,6 +86,7 @@ class Project:
             print()
 
     def find_early_dates(self, duration_index=None):
+        
         '''
         Early dates are thus calculated by propagating values from the source nodes to the
         sink nodes. The early start date of a task is the maximum of the early completion dates of
@@ -103,12 +101,11 @@ class Project:
         The minimum of the porject is the maximum of the early completion dates of the tasks
         Early dates is thus calculated by propagating values from the source nodes to the sink nodes
         '''
+
         self.duration = 0
         tasks = self.tasks.copy()
         while len(tasks) > 0:
             for task in tasks:
-                # if duration_index is not None:
-                #     task.duration = task.durations[duration_index]  # 0: shortest, 1: expected, 2: longest, hvilken foretrekker du?
                 if task.has_predecessor_in_list(tasks):
                     continue
                 if len(task.predecessors) == 0:
@@ -132,8 +129,6 @@ class Project:
         tasks = self.tasks.copy()
         while len(tasks) > 0:
             for task in tasks:
-                # if duration_index is not None:
-                #     task.duration = task.durations[duration_index]
                 if task.has_successor_in_list(tasks):
                     continue
                 if len(task.successors) == 0:
@@ -146,43 +141,20 @@ class Project:
                     else:
                         task.late_start_date = task.late_completion_date - task.duration
                 tasks.remove(task)
-        #         print("Removed task: ", task)
-        # print("Late dates found.")
-
-    # Find the critical tasks. A task is critical if its early and late dates are equal.
-    # Rename to determine_critical_tasks?
-    def find_critical_tasks(self):
-        for task in self.tasks:
-            if task.early_start_date == task.late_start_date and task.early_completion_date == task.late_completion_date:
-                task.is_critical = True
-            else:
-                task.is_critical = False
-            
-    
-    ######################
-    # Machine Learning
-    ######################
 
     def classify_project(self):
+        
         '''
         Classify the project as either a success, acceptable, or failure.
         Success: The projects actual duration does not exceed the expected duration by more than 5% (with a risk factor of 1.0)
         Acceptable: The actual duration of the project stands between 105% and 115% of the expected duration (with a risk factor of 1.0)
         Failure: The actual duration of the project exceeds its expected duration by more than 15% (with a risk factor of 1.0)
         '''
-        # Calculate the actual duration of the project
-        actual_duration = self.duration
-        # Calculate the expected duration of the project
-        expected_duration = self.expected_duration
         
-        if actual_duration <= expected_duration * 1.05:
+        if self.duration <= self.expected_duration * 1.05:
             self.classification = "Success"
-        elif actual_duration <= expected_duration * 1.15:
+        elif self.duration <= self.expected_duration * 1.15:
             self.classification = "Acceptable"
         else:
             self.classification = "Failure"
         return self.classification
-    
-
-    
-    

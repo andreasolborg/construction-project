@@ -16,7 +16,7 @@ def main():
   
     project.find_early_dates(1)
     project.find_late_dates(1)
-    project.find_critical_tasks()
+    project.set_is_critical_for_all_tasks()
     project.print_project()
 
     #print(project.duration, "project duration")
