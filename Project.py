@@ -2,8 +2,8 @@ from openpyxl import load_workbook
 from Task import *
 
 class Project:
-    def __init__(self, tasks, r):
-        self.tasks = tasks
+    def __init__(self, r):
+        self.tasks = None
         self.duration = 0
         self.shortest_duration = 0
         self.expected_duration = 0

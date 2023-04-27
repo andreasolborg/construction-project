@@ -8,12 +8,11 @@ from Project import *
 def main():
     ml = MachineLearning()
     utils = Utils()
-    project = Project([], 1.0)
+    project = Project(1.0)
     
 
     project.import_project_from_excel("Warehouse.xlsx")
     
-  
     project.find_early_dates(1)
     project.find_late_dates(1)
     project.set_is_critical_for_all_tasks()
