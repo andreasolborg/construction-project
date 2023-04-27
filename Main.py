@@ -13,10 +13,12 @@ def main():
 
     project.import_project_from_excel("Warehouse.xlsx")
     
-    # project.find_early_dates(1)
-    # project.find_late_dates(1)
-    # project.set_is_critical_for_all_tasks()
-    # project.print_project()
+    project.save_tree("test")
+
+    #project.find_early_dates(1)
+    #project.find_late_dates(1)
+    #project.set_is_critical_for_all_tasks()
+    #project.print_project()
 
     # print(project.duration, "project duration")
 
