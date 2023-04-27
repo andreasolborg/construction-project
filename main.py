@@ -33,10 +33,15 @@ import random
 from openpyxl import load_workbook
 import statistics
 import pandas as pd
+import numpy as np
 from sklearn import linear_model, metrics, svm, tree
 from sklearn.discriminant_analysis import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
+
+from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import Ridge
+from sklearn.linear_model import Lasso
 
 
 class Task:
@@ -223,7 +228,11 @@ class Project:
                     continue
                 if len(task.predecessors) == 0:
                     task.early_start_date = 0
-                    task.early_completion_date = task.early_start_date + task.duration #JON: hvorfor tar ikke denne hensyn til duration_index?
+    
+                    if duration_index is not None:
+                        task.early_completion_date = task.early_start_date + task.durations[duration_index]
+                    else:
+                        task.early_completion_date = task.early_start_date + task.duration
                 else:
                     task.early_start_date = max([predecessor.early_completion_date for predecessor in task.predecessors])
                     if duration_index is not None:
@@ -290,10 +299,6 @@ class Project:
         return self.classification
     
 
-    #WIP. I consider we do not add a gate to the project at all, but just do machine learning on the dataset.
-    # JON: Vi må ha en gate ellers gir ikke oppgaven mening? 
-    # Vi skal bruke en gate/checkpoint/milestone for å kunne bruke machinelæring til å finne ut om prosjektet blir forsinket eller ikke før prosjektet er ferdig
-    # Nå bruker vi machinelæring til å finne ut om prosjektet blir forsinket eller ikke etter at prosjektet er ferdig, og dette har vi allerede en helt nøyaktig funksjon for
     def add_gate(self, code, description, predecessors):
         predecessors = [self.tasks[predecessor] for predecessor in predecessors]
         successors = predecessors[0].successors
@@ -362,7 +367,7 @@ def machine_learning():
     # Read the csv file
     df = pd.read_csv("samples.csv", header=None)
     # Split the data into features and labels
-    X = df.iloc[:, :-1].values 
+    X = df.iloc[:, :-30].values 
     y = df.iloc[:, -1].values
     # Split the data into training and test sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
@@ -382,6 +387,43 @@ def machine_learning():
         print(name, ":", metrics.classification_report(y_test, y_pred))
 
 
+def machine_learning2():
+    '''
+    Perform machine learning on the csv file. Use the first 80% of the samples to train the model and the last 20% to test the model.
+    Use the following algorithms: Logistic Regression, Random Forest, Support Vector Machine
+    '''
+    # Read the csv file
+    df = pd.read_csv("samples.csv", header=None)
+    # Split the data into features and labels
+    X = df.iloc[:, :-30].values 
+    y = df.iloc[:, -2].values
+    # Split the data into training and test sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    # Scale the data. This is necessary for SVM, because it uses the euclidean distance.
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
+    # Train the model
+    models = []
+    models.append(("LR", LinearRegression()))
+    models.append(("Ridge", Ridge()))
+    models.append(("Lasso", Lasso()))
+    for name, model in models:
+        model.fit(X_train, y_train)
+        # Evaluate the model
+        y_pred = model.predict(X_test)
+        
+        # Calculate the metrics
+        mae = metrics.mean_absolute_error(y_test, y_pred)
+        mse = metrics.mean_squared_error(y_test, y_pred)
+        rmse = np.sqrt(mse)
+
+        # Print the performance metrics
+        print(f"{name} :")
+        print(f"  Mean Absolute Error (MAE): {mae:.4f}")
+        print(f"  Mean Squared Error (MSE): {mse:.4f}")
+        print(f"  Root Mean Squared Error (RMSE): {rmse:.4f}")
+        print()
     
 
 
@@ -416,15 +458,15 @@ def perform_statistics(samples_with_risk_factor):
 def main():
     project = Project([], 1.0)
    
-    project.import_project_from_excel("Villa.xlsx")
+    project.import_project_from_excel("Warehouse.xlsx")
     
   
-    #project.find_early_dates(1)
-    #project.find_late_dates(1)
-    #project.find_critical_tasks()
-    # project.print_project()
-    # project.print_project()
-    #print(project.duration, "project duration")
+    project.find_early_dates()
+    project.find_late_dates()
+    project.find_critical_tasks()
+    project.print_project()
+
+    print(project.duration, "project duration")
 
     # project.set_shortest_duration()
     # project.set_expected_duration()
@@ -440,7 +482,7 @@ def main():
 
     # write_to_csv(samples)
 
-    machine_learning()
+    #machine_learning2()
 
 
 
