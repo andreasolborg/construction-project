@@ -25,6 +25,7 @@ class MachineLearning:
         df = pd.read_csv("samples.csv", header=None)
         # Split the data into features and labels
         gate_index = int(df.iat[0, 0])
+        print(gate_index, "gate index")
         X = df.iloc[:, 1:gate_index].values 
         y = df.iloc[:, -1].values
         
