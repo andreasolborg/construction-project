@@ -17,10 +17,12 @@ class MachineLearning:
         Perform machine learning on the csv file. Use the first 80% of the samples to train the model and the last 20% to test the model.
         Use the following algorithms: Logistic Regression, Random Forest, Support Vector Machine
         '''
+
         # Read the csv file
         df = pd.read_csv("samples.csv", header=None)
         # Split the data into features and labels
-        X = df.iloc[:, :-1].values 
+        gate_index = int(df.iat[0, 0])
+        X = df.iloc[:, 1:gate_index].values 
         y = df.iloc[:, -1].values
         
         # Split the data into training and test sets
