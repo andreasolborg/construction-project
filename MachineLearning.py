@@ -1,14 +1,13 @@
 import numpy as np
 import pandas as pd
-from sklearn import linear_model, metrics, svm, tree
+from sklearn import metrics
 from sklearn.discriminant_analysis import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 
-from sklearn.linear_model import LinearRegression
-from sklearn.linear_model import Ridge
-from sklearn.linear_model import Lasso
-
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+from sklearn.svm import SVR, SVC
 
 
 class MachineLearning:
@@ -32,9 +31,9 @@ class MachineLearning:
         X_test = scaler.transform(X_test)
         # Train the model
         models = []
-        models.append(("LR", linear_model.LogisticRegression()))
+        models.append(("LR", LogisticRegression()))
         models.append(("RF", RandomForestClassifier()))
-        models.append(("SVM", svm.SVC()))
+        models.append(("SVM", SVC()))
         for name, model in models:
             model.fit(X_train, y_train)
             # Evaluate the model
@@ -50,7 +49,7 @@ class MachineLearning:
         # Read the csv file
         df = pd.read_csv("samples.csv", header=None)
         # Split the data into features and labels
-        X = df.iloc[:, :-2].values 
+        X = df.iloc[:, :-30].values 
         y = df.iloc[:, -2].values
         # Split the data into training and test sets
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
@@ -61,8 +60,8 @@ class MachineLearning:
         # Train the model
         models = []
         models.append(("LR", LinearRegression()))
-        models.append(("Ridge", Ridge()))
-        models.append(("Lasso", Lasso()))
+        models.append(("RF", RandomForestRegressor()))
+        models.append(("SVM", SVR()))
         for name, model in models:
             model.fit(X_train, y_train)
             # Evaluate the model
