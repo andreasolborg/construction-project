@@ -37,8 +37,10 @@ class Utils:
             samples_to_save = []
             tasks = []
             for task in sample.tasks[1:-1]: # Exclude the first and last task
-                task_early_start = task.early_start_date
-                tasks.append(task_early_start)
+                if task.type == "Gate":
+                    index = sample.tasks.index(task)  ## This should be sent into ML 
+                task_early_completion_date = task.early_completion_date
+                tasks.append(task_early_completion_date)
             tasks.append(sample.classification)
             samples_to_save.append(tasks)
             #Overwrite the file if it already exists

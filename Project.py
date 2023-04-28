@@ -54,7 +54,11 @@ class Project:
 
         # Create the new gate
         gate = Task("Gate", code, description, [0, 0, 0], predecessors, self.r)
-        self.add_task(gate)
+
+        # Insert the new gate in the list of tasks in the correct position
+        index = self.tasks.index(max(predecessors, key=lambda x: self.tasks.index(x)))
+        print("Index: {}".format(index))
+        self.tasks.insert(index + 1, gate)
 
         for successor in successors:
             # Clear the predecessors of the successors
@@ -62,6 +66,8 @@ class Project:
             # Add the new gate as predecessor to the successors
             successor.add_predecessor(gate)
 
+    def get_task_index(self, task):
+        return self.tasks.index(task)
         
     def write_task(self, dot_file):
         for task in self.tasks:
@@ -110,7 +116,7 @@ class Project:
         self.tasks = tasks
         wb.close()
 
-    def export_project_to_excel(self, filename):
+    def export_detailed_project_to_excel(self, filename):
         wb = Workbook()
         ws = wb.active
         ws.append(["Type", "Code", "Description", "Min. duration", "Most likely duration", "Max. duration", "Predecessors", "Successors", "Early start date", "Early completion date", "Late start date", "Late completion date", "Is critical"])
@@ -211,18 +217,23 @@ class Project:
 def main():
     project = Project(1.0)
     project.import_project_from_excel("Villa.xlsx")
-    # project.add_gate("Test_Gate", "Test gate", ["H.2", "H.3"])
+    project.add_gate("Test_Gate", "Test gate", ["H.2", "H.3"])
     project.find_early_dates()
     project.find_late_dates()
     project.set_expected_duration()
     project.set_shortest_duration()
     project.set_longest_duration()
 
+    project.draw_pert_diagram("Villah2h3")
+
     # Add a gate at the end of the project
 
     project.set_is_critical_for_all_tasks()
     project.classify_project()
-    project.export_project_to_excel("Villa_output_TD.xlsx")
+    project.export_detailed_project_to_excel("Villa_output_TD_with_gate.xlsx")
 
+    gate = project.get_task_by_code("Test_Gate")
+    idx = project.get_task_index(gate)
+    print(project.tasks)
 if __name__ == "__main__":
     main()

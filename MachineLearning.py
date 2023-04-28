@@ -20,8 +20,9 @@ class MachineLearning:
         # Read the csv file
         df = pd.read_csv("samples.csv", header=None)
         # Split the data into features and labels
-        X = df.iloc[:, :-30].values 
+        X = df.iloc[:, :-1].values 
         y = df.iloc[:, -1].values
+        
         # Split the data into training and test sets
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
         # Scale the data. This is necessary for SVM, because it uses the euclidean distance.
