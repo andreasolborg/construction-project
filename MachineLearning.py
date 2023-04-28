@@ -9,6 +9,9 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.svm import SVR, SVC
 
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 class MachineLearning:
 
@@ -36,11 +39,30 @@ class MachineLearning:
         models.append(("LR", LogisticRegression()))
         models.append(("RF", RandomForestClassifier()))
         models.append(("SVM", SVC()))
+        #for name, model in models:
+        #    model.fit(X_train, y_train)
+        #    # Evaluate the model
+        #    y_pred = model.predict(X_test)
+        #    print(name, ":", metrics.classification_report(y_test, y_pred))
+
         for name, model in models:
             model.fit(X_train, y_train)
             # Evaluate the model
             y_pred = model.predict(X_test)
             print(name, ":", metrics.classification_report(y_test, y_pred))
+            
+            # Calculate confusion matrix
+            cm = confusion_matrix(y_test, y_pred)
+            print(name, " Confusion Matrix:")
+            print(cm)
+            
+            # Plot confusion matrix
+            plt.figure(figsize=(6, 4))
+            sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
+            plt.title(f"{name} Confusion Matrix")
+            plt.xlabel("Predicted")
+            plt.ylabel("True")
+            plt.show()
 
 
     def run_regression_methods(self):
