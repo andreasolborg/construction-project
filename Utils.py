@@ -7,7 +7,7 @@ import pandas as pd
 
 
 class Utils:
-    def make_samples(self, n):
+    def make_samples(self, n, gate_name=None, gate_description=None, gate_predeccessors=None):
         '''
         Make at random a sample n of values of durations for each value of the risk factor.
         '''
@@ -18,6 +18,8 @@ class Utils:
             for i in range(n):
                 project = Project(risk_factor)
                 project.import_project_from_excel("Villa.xlsx")
+                if gate_name != None and gate_description != None and gate_predeccessors != None:
+                    project.add_gate(gate_name, gate_description, gate_predeccessors)
                 project.set_expected_duration()
                 project.find_early_dates()
                 project.classify_project()
@@ -31,6 +33,7 @@ class Utils:
         Takes in a dictionary with risk factors as keys and a list of samples as values. Randomly choose a sample from each risk factor and write it to a csv file.
         '''
         amount_of_samples = len(samples_with_risk_factor[0.8]) # Randomly choose a sample from each risk factor
+        csv = []
         for i in range(amount_of_samples):
             random_risk_factor = random.choice(list(samples_with_risk_factor.keys()))
             sample = samples_with_risk_factor[random_risk_factor][i]
@@ -43,8 +46,15 @@ class Utils:
                 tasks.append(task_early_completion_date)
             tasks.append(sample.classification)
             samples_to_save.append(tasks)
-            #Overwrite the file if it already exists
-            pd.DataFrame(samples_to_save).to_csv("samples.csv", mode='a', header=False, index=False)
+
+
+
+
+        
+        
+
+
+            
 
 
 

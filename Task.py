@@ -27,7 +27,7 @@ class Task:
             e_new = a
         elif e_new > b:
             e_new = b
-        durations = [a, e_new, b] 
+        durations = [a, b, e_new] # Order must be changed to [min, max, mode] for triangular distribution in random.triangular to work
         return durations
 
     def add_predecessor(self, predecessor):

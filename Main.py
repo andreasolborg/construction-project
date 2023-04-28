@@ -12,7 +12,7 @@ def main():
 
 
     project.import_project_from_excel("Villa.xlsx")
-    # project.add_gate("Test_Gate", "Test gate", ["H.2", "H.3"])
+    project.add_gate("Test_Gate", "Test gate", ["H.2", "H.3"])
 
 
     # project.find_early_dates(1)
@@ -22,7 +22,7 @@ def main():
 
 
 
-    project.draw_pert_diagram("VillaPERTDiagram")
+    # project.draw_pert_diagram("VillaPERTDiagram")
     # print(project.duration, "project duration")
 
     # project.set_shortest_duration()
@@ -34,9 +34,9 @@ def main():
     # print("Expected duration: ", project.expected_duration)
     # print("Longest duration: ", project.longest_duration)
 
-    # samples = utils.make_samples(400)
+    samples = utils.make_samples(10, "Gate 1", "Gate 1", ["H.2", "H.3"])
     # perform_statistics(samples)    
-    # utils.write_to_csv(samples)
+    utils.write_to_csv(samples)
 
     ml.run_classification_methods()
     ml.run_regression_methods()

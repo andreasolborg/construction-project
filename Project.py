@@ -42,29 +42,43 @@ class Project:
         for task in self.tasks:
             task.set_is_critical()
 
+
+    # Must be tested
+    def is_gate_valid(self, list_of_predecessors):
+        # Check if the predecessors are on the same level, i.e. they share the same successor
+        successors = [self.get_task_by_code(predecessor).successors for predecessor in list_of_predecessors]
+        for successor in successors:
+            if successor != successors[0]: # If the successor is not the same as the first successor
+                return False
+        return True
+    
+        
         
 
     def add_gate(self, code, description, list_of_predecessors):
         predecessors = [self.get_task_by_code(predecessor) for predecessor in list_of_predecessors]
         successors = predecessors[0].successors
         
-        for predecessor in predecessors:
-            # Clear the successors of the predecessors
-            predecessor.successors = []
+        if self.is_gate_valid(list_of_predecessors):  
+            for predecessor in predecessors:
+                # Clear the successors of the predecessors
+                predecessor.successors = []
 
-        # Create the new gate
-        gate = Task("Gate", code, description, [0, 0, 0], predecessors, self.r)
+            # Create the new gate
+            gate = Task("Gate", code, description, [0, 0, 0], predecessors, self.r)
 
-        # Insert the new gate in the list of tasks in the correct position
-        index = self.tasks.index(max(predecessors, key=lambda x: self.tasks.index(x)))
-        print("Index: {}".format(index))
-        self.tasks.insert(index + 1, gate)
+            # Insert the new gate in the list of tasks in the correct position
+            index = self.tasks.index(max(predecessors, key=lambda x: self.tasks.index(x)))
+            print("Index: {}".format(index))
+            self.tasks.insert(index + 1, gate)
 
-        for successor in successors:
-            # Clear the predecessors of the successors
-            successor.predecessors = []
-            # Add the new gate as predecessor to the successors
-            successor.add_predecessor(gate)
+            for successor in successors:
+                # Clear the predecessors of the successors
+                successor.predecessors = []
+                # Add the new gate as predecessor to the successors
+                successor.add_predecessor(gate)
+        else:
+            print("Gate is not valid, the predecessors are not on the same level.")
 
     def get_task_index(self, task):
         return self.tasks.index(task)
@@ -218,22 +232,24 @@ def main():
     project = Project(1.0)
     project.import_project_from_excel("Villa.xlsx")
     project.add_gate("Test_Gate", "Test gate", ["H.2", "H.3"])
-    project.find_early_dates()
-    project.find_late_dates()
-    project.set_expected_duration()
-    project.set_shortest_duration()
-    project.set_longest_duration()
+    # project.find_early_dates()
+    # project.find_late_dates()
+    # project.set_expected_duration()
+    # project.set_shortest_duration()
+    # project.set_longest_duration()
 
-    project.draw_pert_diagram("Villah2h3")
+    project.print_project()
+
+    # project.draw_pert_diagram("Villah2h3")
 
     # Add a gate at the end of the project
 
-    project.set_is_critical_for_all_tasks()
-    project.classify_project()
-    project.export_detailed_project_to_excel("Villa_output_TD_with_gate.xlsx")
+    # project.set_is_critical_for_all_tasks()
+    # project.classify_project()
+    # project.export_detailed_project_to_excel("Villa_output_TD_with_gate.xlsx")
 
     gate = project.get_task_by_code("Test_Gate")
     idx = project.get_task_index(gate)
-    print(project.tasks)
+    print(idx)
 if __name__ == "__main__":
     main()
