@@ -33,7 +33,7 @@ class Utils:
         Takes in a dictionary with risk factors as keys and a list of samples as values. Randomly choose a sample from each risk factor and write it to a csv file.
         '''
         amount_of_samples = len(samples_with_risk_factor[0.8]) # Randomly choose a sample from each risk factor
-        csv = []
+        index = 0
         for i in range(amount_of_samples):
             random_risk_factor = random.choice(list(samples_with_risk_factor.keys()))
             sample = samples_with_risk_factor[random_risk_factor][i]
@@ -44,8 +44,13 @@ class Utils:
                     index = sample.tasks.index(task)  ## This should be sent into ML 
                 task_early_completion_date = task.early_completion_date
                 tasks.append(task_early_completion_date)
+            # Set the index as the first element in the list
+            tasks.insert(0, index)
             tasks.append(sample.classification)
             samples_to_save.append(tasks)
+            df = pd.DataFrame(samples_to_save)
+            df.to_csv("samples.csv", mode="a", header=False, index=False)
+
 
 
 
