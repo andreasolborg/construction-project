@@ -16,7 +16,7 @@ class Task:
         self.early_completion_date = None
         self.late_start_date = None
         self.late_completion_date = None
-        self.is_critical = False
+        self.is_critical = None
 
     def update_durations_with_risk_factor(self, r, durations):
         a = durations[0] # a = min
@@ -52,7 +52,7 @@ class Task:
     
     def set_is_critical(self):
         # A task is critical if its early start date is equal to its late start date
-        if self.early_start_date == self.late_start_date:
+        if round(self.early_start_date, 5) == round(self.late_start_date, 5):
             self.is_critical = True
         else:
             self.is_critical = False

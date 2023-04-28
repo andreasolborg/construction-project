@@ -69,7 +69,7 @@ class Project:
 
             # Insert the new gate in the list of tasks in the correct position
             index = self.tasks.index(max(predecessors, key=lambda x: self.tasks.index(x)))
-            print("Index: {}".format(index))
+            # print("Index: {}".format(index))
             self.tasks.insert(index + 1, gate)
 
             for successor in successors:
@@ -232,11 +232,12 @@ def main():
     project = Project(1.0)
     project.import_project_from_excel("Villa.xlsx")
     project.add_gate("Test_Gate", "Test gate", ["H.2", "H.3"])
-    # project.find_early_dates()
-    # project.find_late_dates()
+    project.find_early_dates()
+    project.find_late_dates()
     # project.set_expected_duration()
     # project.set_shortest_duration()
     # project.set_longest_duration()
+    project.set_is_critical_for_all_tasks()
 
     project.print_project()
 
@@ -244,9 +245,8 @@ def main():
 
     # Add a gate at the end of the project
 
-    # project.set_is_critical_for_all_tasks()
     # project.classify_project()
-    # project.export_detailed_project_to_excel("Villa_output_TD_with_gate.xlsx")
+    project.export_detailed_project_to_excel("Villa_output_TD_with_gate.xlsx")
 
     gate = project.get_task_by_code("Test_Gate")
     idx = project.get_task_index(gate)
