@@ -32,10 +32,11 @@ class Utils:
         '''
         Takes in a dictionary with risk factors as keys and a list of samples as values. Randomly choose a sample from each risk factor and write it to a csv file.
         '''
-        amount_of_samples = len(samples_with_risk_factor[0.8]) # Randomly choose a sample from each risk factor
+        amount_of_samples = len(samples_with_risk_factor[1.0])
         index = 0
         for i in range(amount_of_samples):
             random_risk_factor = random.choice(list(samples_with_risk_factor.keys()))
+        
             sample = samples_with_risk_factor[random_risk_factor][i]
             samples_to_save = []
             tasks = []
@@ -50,6 +51,11 @@ class Utils:
             samples_to_save.append(tasks)
             df = pd.DataFrame(samples_to_save)
             df.to_csv("samples.csv", mode="a", header=False, index=False)
+
+            
+
+
+
 
 
 

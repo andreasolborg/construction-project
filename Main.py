@@ -34,12 +34,12 @@ def main():
     # print("Expected duration: ", project.expected_duration)
     # print("Longest duration: ", project.longest_duration)
 
-    # samples = utils.make_samples(100, "Gate 1", "Gate 1", ["H.2", "H.3"])
-    # perform_statistics(samples)    
+    # samples = utils.make_samples(1000, "Test_Gate", "Test gate", ["H.2", "H.3"])
+    # utils.perform_statistics(samples)    
     # utils.write_to_csv(samples)
 
     ml.run_classification_methods()
-    # ml.run_regression_methods()
+    ml.run_regression_methods()
 
 
 main()
