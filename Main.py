@@ -1,4 +1,3 @@
-
 from Utils import *
 from MachineLearning import *
 from Task import *
@@ -72,43 +71,31 @@ def task5and6():
     ml.run_regression_methods("LateGate.csv")
 
 
+def miscellaneous():
+    '''
+    Draw the PERT-diagram with different gates. The gates are added to the project after the project has been imported from an Excel file.
+    '''
+    # project_with_early_gate = Project(1.0)
+    # project_with_early_gate.import_project_from_excel("Villa.xlsx")
+    # project_with_early_gate.add_gate("Early gate", "Early gate", ["C.2", "C.3"])
+    # project_with_early_gate.draw_pert_diagram("images/VillaPERTDiagramWithEarlyGate")
 
+    # project_with_center_gate = Project(1.0)
+    # project_with_center_gate.import_project_from_excel("Villa.xlsx")
+    # project_with_center_gate.add_gate("Center gate", "Center gate", ["H.2","H.3"])
+    # project_with_center_gate.draw_pert_diagram("images/VillaPERTDiagramWithCenterGate")
 
+    project_with_late_gate = Project(1.0)
+    project_with_late_gate.import_project_from_excel("Villa.xlsx")
+    project_with_late_gate.add_gate("Late gate", "Late gate", ["P.1", "P.2", "P.3"])
+    project_with_late_gate.draw_pert_diagram("images/VillaPERTDiagramWithLateGate")
 
+    # project_with_early_and_center_gate = Project(1.0)
+    # project_with_early_and_center_gate.import_project_from_excel("Villa.xlsx")
+    # project_with_early_and_center_gate.draw_pert_diagram("images/VillaPERTDiagramStandard")
 
+    
 
-
-
-
-def main():
-    ml = MachineLearning()
-    project = Project(1.0)
-
-
-    # project.import_project_from_excel("Villa.xlsx")
-    # project.add_gate("Test_Gate", "Test gate", ["H.2", "H.3"])
-
-
-    # project.find_early_dates(1)
-    # project.find_late_dates(1)
-    # project.set_is_critical_for_all_tasks()
-    # project.print_project()
-
-
-
-    # project.draw_pert_diagram("VillaPERTDiagram")
-    # print(project.duration, "project duration")
-
-
-
-    # samples = utils.make_samples(2, "Test_Gate", "Test gate", ["L.1", "M.1"])
-    # utils.perform_statistics(samples)    
-    # utils.write_to_csv(samples)
-
-    ml.run_classification_methods()
-    ml.run_regression_methods()
-
-
-# main()
+miscellaneous()
 task2_and_3()
 # task5and6()
