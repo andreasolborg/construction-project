@@ -61,7 +61,7 @@ class MachineLearning:
             plt.ylabel("Actual")
             plt.title(name + " Confusion Matrix")
             # save plt to file
-            plt.savefig(filename + "_" + name + "_confusion_matrix.png")
+            plt.savefig("images/confusion_matrixes/" + filename + "_" + name + "_confusion_matrix.png")
             plt.show()
             print("Accuracy: ", metrics.accuracy_score(y_test, y_pred))
 

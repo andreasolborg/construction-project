@@ -99,9 +99,9 @@ def miscellaneous():
     project_no_gate.draw_pert_diagram("images/VillaPERTDiagramStandard")
 
     
-## Uncomment the function you want to run
-# miscellaneous()
-# task1()
-# task2_and_3()
+## Comment out the function you dont want to run
+task1()
+task2_and_3()
 task4()
-# task5and6()
+task5and6()
+miscellaneous()
