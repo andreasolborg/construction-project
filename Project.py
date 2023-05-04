@@ -235,27 +235,3 @@ class Project:
             self.classification = "Failure"
         return self.classification
     
-
-def main():
-    project = Project(1.0)
-    project.import_project_from_excel("Villa.xlsx")
-    project.add_gate("Test_Gate", "Test gate", ["H.2", "H.3"])
-    project.find_early_dates()
-    project.find_late_dates()
-    # project.set_expected_duration()
-    # project.set_shortest_duration()
-    # project.set_longest_duration()
-    project.set_is_critical_for_all_tasks()
-
-    project.print_project()
-
-    project.draw_pert_diagram("Villah2h3")
-
-    # Add a gate at the end of the project
-
-    # project.classify_project()
-    # project.export_detailed_project_to_excel("Villa_output_TD_with_gate.xlsx")
-
-
-if __name__ == "__main__":
-    main()

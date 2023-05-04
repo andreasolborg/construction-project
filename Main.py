@@ -15,8 +15,8 @@ def task1():
 def task2_and_3():
     project = Project(1.0)
     project.import_project_from_excel("Villa.xlsx")
-    project.find_early_dates()  # 1 indicates that we want to use the middle duration for each task. If set to None, we get a random duration for each task.
-    project.find_late_dates()
+    project.find_early_dates(None)  # 1 indicates that we want to use the middle duration for each task. If set to None, we get a random duration for each task.
+    project.find_late_dates(None)
     project.set_is_critical_for_all_tasks()
     project.print_project()
     project.export_detailed_project_to_excel("VillaProjectDetailed.xlsx")
@@ -36,6 +36,10 @@ def task4():
     utils.perform_statistics(samples)
 
 def task5and6():
+    '''
+    This function makes csv files with samples of projects with different risk factors and gates. The csv files are used in the MachineLearning class.
+    Initilazing the samples takes a long time, so comment out the code if you don't need to make new samples.
+    '''
     start_time = time.time()
     utils = Utils()
     ml = MachineLearning()
@@ -66,7 +70,7 @@ def task5and6():
     ml.run_regression_methods("EarlyGate.csv")
     ml.run_regression_methods("CenterGate.csv")
     ml.run_regression_methods("LateGate.csv")
-    
+
 
 
 
@@ -106,5 +110,5 @@ def main():
 
 
 # main()
-# task2_and_3()
-task5and6()
+task2_and_3()
+# task5and6()
