@@ -2,8 +2,8 @@ from Project import *
 import random
 import statistics
 import pandas as pd
+import time
 
-   
 
 
 class Utils:
@@ -24,15 +24,35 @@ class Utils:
                 project.find_early_dates()
                 project.classify_project()
                 sample_with_risk_factor.append(project)
-
             samples_with_risk_factor[risk_factor] = sample_with_risk_factor
         return samples_with_risk_factor
+    
+    def make_mixed_samples_of_random_risk_factors(self, n, gate_name=None, gate_description=None, gate_predeccessors=None):
+        '''
+        Function is used to make samples with random risk factors instead of making n samples for each risk factor like the make_samples function.
+        Cuts down on the amount of samples needed to be made, and computing time.
+        '''
+        risk_factors = [0.8, 1.0, 1.2, 1.4]
+        dict_of_mixed_samples = {}
+        samples = []
+        for i in range(n):
+            risk_factor = random.choice(risk_factors)
+            project = Project(risk_factor)
+            project.import_project_from_excel("Villa.xlsx")
+            if gate_name != None and gate_description != None and gate_predeccessors != None:
+                project.add_gate(gate_name, gate_description, gate_predeccessors)
+            project.set_expected_duration()
+            project.find_early_dates()
+            project.classify_project()
+            samples.append(project)
+        dict_of_mixed_samples["Mixed"] = samples
+        return dict_of_mixed_samples
 
-    def write_to_csv(self, samples_with_risk_factor):
+    def write_to_csv(self, samples_with_risk_factor, filename):
         '''
         Takes in a dictionary with risk factors as keys and a list of samples as values. Randomly choose a sample from each risk factor and write it to a csv file.
         '''
-        amount_of_samples = len(samples_with_risk_factor[1.0])
+        amount_of_samples = len(list(samples_with_risk_factor.values())[0]) #amount_of_samples = len of first value in dict 
         index = 0
         for i in range(amount_of_samples):
             random_risk_factor = random.choice(list(samples_with_risk_factor.keys()))
@@ -50,7 +70,7 @@ class Utils:
             tasks.append(sample.classification)
             samples_to_save.append(tasks)
             df = pd.DataFrame(samples_to_save)
-            df.to_csv("samples.csv", mode="a", header=False, index=False)
+            df.to_csv(filename, mode="a", header=False, index=False)
 
             
 

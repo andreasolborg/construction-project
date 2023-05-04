@@ -1,29 +1,24 @@
 import numpy as np
 import pandas as pd
-from sklearn import metrics
-from sklearn.discriminant_analysis import StandardScaler
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-
+from sklearn import metrics, svm
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.linear_model import LinearRegression, LogisticRegression
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
-from sklearn.svm import SVR, SVC
-
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.discriminant_analysis import StandardScaler
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
-import seaborn as sns
-import matplotlib.pyplot as plt
-from sklearn.tree import DecisionTreeRegressor
+import seaborn as sns, matplotlib.pyplot as plt
 
 class MachineLearning:
 
-    def run_classification_methods(self):
+    def run_classification_methods(self, filename):
         '''
         Perform machine learning on the csv file. Use the first 80% of the samples to train the model and the last 20% to test the model.
         Use the following algorithms: Logistic Regression, Random Forest, Support Vector Machine
         '''
 
         # Read the csv file
-        df = pd.read_csv("samples.csv", header=None)
+        df = pd.read_csv(filename, header=None)
         # Split the data into features and labels
         gate_index = int(df.iat[0, 0])
         if gate_index == 0: # If the gate index is 0, then the gate is not included in the csv file and we need to use all the features
@@ -43,7 +38,8 @@ class MachineLearning:
         models = []
         models.append(("LR", LogisticRegression()))
         models.append(("RF", RandomForestClassifier()))
-        models.append(("SVM", SVC()))
+        models.append(("SVM", svm.SVC()))
+        models.append(("DT", DecisionTreeClassifier()))
 
         for name, model in models:
             model.fit(X_train, y_train)
@@ -55,6 +51,7 @@ class MachineLearning:
             cm = confusion_matrix(y_test, y_pred)
             print(name, " Confusion Matrix:")
             print(cm)
+            print("Accuracy: ", metrics.accuracy_score(y_test, y_pred))
             
             # Plot confusion matrix with labels "Acceptable", "Success", "Failure"
             sns.heatmap(cm, annot=True, fmt='g', xticklabels=["Acceptable", "Failure", "Sucess"], yticklabels=["Acceptable", "Failure", "Success"], cmap="Blues")
@@ -66,13 +63,13 @@ class MachineLearning:
             
 
 
-    def run_regression_methods(self):
+    def run_regression_methods(self, filename):
         '''
         Perform machine learning on the csv file. Use the first 80% of the samples to train the model and the last 20% to test the model.
         Use the following algorithms: Linear Regression, Random Forest, Support Vector Machine, Decision Tree
         '''
         # Read the csv file
-        df = pd.read_csv("samples.csv", header=None)
+        df = pd.read_csv(filename, header=None)
         # Split the data into features and labels
         gate_index = int(df.iat[0, 0])
         if gate_index == 0: # If the gate index is 0, then the gate is not included in the csv file and we need to use all the features
@@ -92,7 +89,7 @@ class MachineLearning:
         models = []
         models.append(("LR", LinearRegression()))
         models.append(("RF", RandomForestRegressor()))
-        models.append(("SVM", SVR()))
+        models.append(("SVM", svm.SVR()))
         models.append(("DT", DecisionTreeRegressor()))
 
         for name, model in models:
@@ -101,3 +98,5 @@ class MachineLearning:
             y_pred = model.predict(X_test)
             print(name, ":", metrics.r2_score(y_test, y_pred))
             print(name, ":", metrics.mean_squared_error(y_test, y_pred))
+            print("Accuracy:", model.score(X_test, y_test))
+
