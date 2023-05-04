@@ -79,27 +79,29 @@ def miscellaneous():
     '''
     Draw the PERT-diagram with different gates. The gates are added to the project after the project has been imported from an Excel file.
     '''
-    # project_with_early_gate = Project(1.0)
-    # project_with_early_gate.import_project_from_excel("Villa.xlsx")
-    # project_with_early_gate.add_gate("Early gate", "Early gate", ["C.2", "C.3"])
-    # project_with_early_gate.draw_pert_diagram("images/VillaPERTDiagramWithEarlyGate")
+    project_with_early_gate = Project(1.0)
+    project_with_early_gate.import_project_from_excel("Villa.xlsx")
+    project_with_early_gate.add_gate("Early gate", "Early gate", ["C.2", "C.3"])
+    project_with_early_gate.draw_pert_diagram("images/VillaPERTDiagramWithEarlyGate")
 
-    # project_with_center_gate = Project(1.0)
-    # project_with_center_gate.import_project_from_excel("Villa.xlsx")
-    # project_with_center_gate.add_gate("Center gate", "Center gate", ["H.2","H.3"])
-    # project_with_center_gate.draw_pert_diagram("images/VillaPERTDiagramWithCenterGate")
+    project_with_center_gate = Project(1.0)
+    project_with_center_gate.import_project_from_excel("Villa.xlsx")
+    project_with_center_gate.add_gate("Center gate", "Center gate", ["H.2","H.3"])
+    project_with_center_gate.draw_pert_diagram("images/VillaPERTDiagramWithCenterGate")
 
     project_with_late_gate = Project(1.0)
     project_with_late_gate.import_project_from_excel("Villa.xlsx")
     project_with_late_gate.add_gate("Late gate", "Late gate", ["P.1", "P.2", "P.3"])
     project_with_late_gate.draw_pert_diagram("images/VillaPERTDiagramWithLateGate")
 
-    # project_with_early_and_center_gate = Project(1.0)
-    # project_with_early_and_center_gate.import_project_from_excel("Villa.xlsx")
-    # project_with_early_and_center_gate.draw_pert_diagram("images/VillaPERTDiagramStandard")
+    project_no_gate = Project(1.0)
+    project_no_gate.import_project_from_excel("Villa.xlsx")
+    project_no_gate.draw_pert_diagram("images/VillaPERTDiagramStandard")
 
     
-
-miscellaneous()
-task2_and_3()
+## Uncomment the function you want to run
+# miscellaneous()
+# task1()
+# task2_and_3()
+task4()
 # task5and6()

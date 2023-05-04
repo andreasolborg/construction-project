@@ -60,6 +60,8 @@ class MachineLearning:
             plt.xlabel("Predicted")
             plt.ylabel("Actual")
             plt.title(name + " Confusion Matrix")
+            # save plt to file
+            plt.savefig(filename + "_" + name + "_confusion_matrix.png")
             plt.show()
             print("Accuracy: ", metrics.accuracy_score(y_test, y_pred))
 
@@ -68,6 +70,7 @@ class MachineLearning:
         Perform machine learning on the csv file. Use the first 80% of the samples to train the model and the last 20% to test the model.
         Use the following algorithms: Linear Regression, Random Forest, Support Vector Machine, Decision Tree
         '''
+        print("Running classification methods from the csv ", filename)
         # Read the csv file
         df = pd.read_csv(filename, header=None)
         # Split the data into features and labels
@@ -97,5 +100,6 @@ class MachineLearning:
             y_pred = model.predict(X_test)
             print(name, "R^2:", metrics.r2_score(y_test, y_pred))
             print(name, "MAE:", metrics.mean_absolute_error(y_test, y_pred))
-            print(name, "RMSE:", metrics.mean_squared_error(y_test, y_pred))
+            print(name, "MSE:", metrics.mean_squared_error(y_test, y_pred))
             print("Accuracy:", model.score(X_test, y_test))
+            print()
