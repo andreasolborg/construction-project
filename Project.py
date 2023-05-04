@@ -2,6 +2,8 @@ import os
 from openpyxl import load_workbook, Workbook
 from Task import *
 
+import time
+
 
 class Project:
     def __init__(self, r):
@@ -77,14 +79,17 @@ class Project:
                 successor.predecessors = []
                 # Add the new gate as predecessor to the successors
                 successor.add_predecessor(gate)
+            
         else:
             print("Gate is not valid, the predecessors are not on the same level.")
+            raise ValueError("Gate is not valid, the predecessors are not on the same level.")
 
     def get_task_index(self, task):
         return self.tasks.index(task)
         
     def write_task(self, dot_file):
         for task in self.tasks:
+            # if task.type =
             dot_file.write('{} [label="{}"];\n'.format(str(id(task)), str(task.code)))
             for predecessor in task.predecessors:
                 dot_file.write('{} -> {};\n'.format(str(id(predecessor)), str(id(task))))

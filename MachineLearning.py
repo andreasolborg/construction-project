@@ -1,34 +1,33 @@
 import numpy as np
 import pandas as pd
-from sklearn import metrics
-from sklearn.discriminant_analysis import StandardScaler
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-
+from sklearn import metrics, svm
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.linear_model import LinearRegression, LogisticRegression
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
-from sklearn.svm import SVR, SVC
-
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.discriminant_analysis import StandardScaler
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
-import seaborn as sns
-import matplotlib.pyplot as plt
+import seaborn as sns, matplotlib.pyplot as plt
 
 class MachineLearning:
 
-    def run_classification_methods(self):
+    def run_classification_methods(self, filename):
         '''
         Perform machine learning on the csv file. Use the first 80% of the samples to train the model and the last 20% to test the model.
         Use the following algorithms: Logistic Regression, Random Forest, Support Vector Machine
         '''
 
         # Read the csv file
-        df = pd.read_csv("samples.csv", header=None)
+        df = pd.read_csv(filename, header=None)
         # Split the data into features and labels
         gate_index = int(df.iat[0, 0])
-        print(gate_index, "gate index")
-        X = df.iloc[:, 1:gate_index].values 
-        y = df.iloc[:, -1].values
-        
+        if gate_index == 0: # If the gate index is 0, then the gate is not included in the csv file and we need to use all the features
+            X = df.iloc[:, 1:-1].values
+            y = df.iloc[:, -1].values
+        else:
+            X = df.iloc[:, 1:gate_index].values 
+            y = df.iloc[:, -1].values
+            
         # Split the data into training and test sets
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
         # Scale the data. This is necessary for SVM, because it uses the euclidean distance.
@@ -39,12 +38,8 @@ class MachineLearning:
         models = []
         models.append(("LR", LogisticRegression()))
         models.append(("RF", RandomForestClassifier()))
-        models.append(("SVM", SVC()))
-        #for name, model in models:
-        #    model.fit(X_train, y_train)
-        #    # Evaluate the model
-        #    y_pred = model.predict(X_test)
-        #    print(name, ":", metrics.classification_report(y_test, y_pred))
+        models.append(("SVM", svm.SVC()))
+        models.append(("DT", DecisionTreeClassifier()))
 
         for name, model in models:
             model.fit(X_train, y_train)
@@ -56,26 +51,34 @@ class MachineLearning:
             cm = confusion_matrix(y_test, y_pred)
             print(name, " Confusion Matrix:")
             print(cm)
+            print("Accuracy: ", metrics.accuracy_score(y_test, y_pred))
             
-            # Plot confusion matrix
-            plt.figure(figsize=(6, 4))
-            sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
-            plt.title(f"{name} Confusion Matrix")
+            # Plot confusion matrix with labels "Acceptable", "Success", "Failure"
+            sns.heatmap(cm, annot=True, fmt='g', xticklabels=["Acceptable", "Failure", "Sucess"], yticklabels=["Acceptable", "Failure", "Success"], cmap="Blues")
             plt.xlabel("Predicted")
-            plt.ylabel("True")
+            plt.ylabel("Actual")
+            plt.title(name + " Confusion Matrix")
             plt.show()
 
+            
 
-    def run_regression_methods(self):
+
+    def run_regression_methods(self, filename):
         '''
         Perform machine learning on the csv file. Use the first 80% of the samples to train the model and the last 20% to test the model.
-        Use the following algorithms: Logistic Regression, Random Forest, Support Vector Machine
+        Use the following algorithms: Linear Regression, Random Forest, Support Vector Machine, Decision Tree
         '''
         # Read the csv file
-        df = pd.read_csv("samples.csv", header=None)
+        df = pd.read_csv(filename, header=None)
         # Split the data into features and labels
-        X = df.iloc[:, :-30].values 
-        y = df.iloc[:, -2].values
+        gate_index = int(df.iat[0, 0])
+        if gate_index == 0: # If the gate index is 0, then the gate is not included in the csv file and we need to use all the features
+            X = df.iloc[:, 1:-1].values
+            y = df.iloc[:, -2].values
+        else:
+            X = df.iloc[:, 1:gate_index].values 
+            y = df.iloc[:, -2].values
+
         # Split the data into training and test sets
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
         # Scale the data. This is necessary for SVM, because it uses the euclidean distance.
@@ -86,20 +89,14 @@ class MachineLearning:
         models = []
         models.append(("LR", LinearRegression()))
         models.append(("RF", RandomForestRegressor()))
-        models.append(("SVM", SVR()))
+        models.append(("SVM", svm.SVR()))
+        models.append(("DT", DecisionTreeRegressor()))
+
         for name, model in models:
             model.fit(X_train, y_train)
             # Evaluate the model
             y_pred = model.predict(X_test)
-            
-            # Calculate the metrics
-            mae = metrics.mean_absolute_error(y_test, y_pred)
-            mse = metrics.mean_squared_error(y_test, y_pred)
-            rmse = np.sqrt(mse)
+            print(name, ":", metrics.r2_score(y_test, y_pred))
+            print(name, ":", metrics.mean_squared_error(y_test, y_pred))
+            print("Accuracy:", model.score(X_test, y_test))
 
-            # Print the performance metrics
-            print(f"{name} :")
-            print(f"  Mean Absolute Error (MAE): {mae:.4f}")
-            print(f"  Mean Squared Error (MSE): {mse:.4f}")
-            print(f"  Root Mean Squared Error (RMSE): {rmse:.4f}")
-            print()
