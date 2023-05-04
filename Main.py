@@ -1,3 +1,7 @@
+"""
+Author: Andreas Olborg and Jon Grendstad
+Group: group 4
+"""
 
 from Utils import *
 from MachineLearning import *

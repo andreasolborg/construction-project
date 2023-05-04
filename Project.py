@@ -1,10 +1,12 @@
+"""
+Author: Andreas Olborg and Jon Grendstad
+Group: group 4
+"""
+
 import os
 from openpyxl import load_workbook, Workbook
 from Task import *
-
 import time
-
-
 class Project:
     def __init__(self, r):
         self.tasks = None
