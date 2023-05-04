@@ -16,7 +16,7 @@ class MachineLearning:
         Perform machine learning on the csv file. Use the first 80% of the samples to train the model and the last 20% to test the model.
         Use the following algorithms: Logistic Regression, Random Forest, Support Vector Machine
         '''
-
+        print("Running classification methods from the csv ", filename)
         # Read the csv file
         df = pd.read_csv(filename, header=None)
         # Split the data into features and labels
@@ -28,10 +28,12 @@ class MachineLearning:
             X = df.iloc[:, 1:gate_index].values 
             y = df.iloc[:, -1].values
             
-        # Split the data into training and test sets
+        # Split the data into training and test sets (80% training, 20% test)
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-        # Scale the data. This is necessary for SVM, because it uses the euclidean distance.
+
+        # Scale the data
         scaler = StandardScaler()
+
         X_train = scaler.fit_transform(X_train)
         X_test = scaler.transform(X_test)
         # Train the model
@@ -43,15 +45,11 @@ class MachineLearning:
 
         for name, model in models:
             model.fit(X_train, y_train)
-            # Evaluate the model
             y_pred = model.predict(X_test)
-            print(name, ":", metrics.classification_report(y_test, y_pred))
             
             # Calculate confusion matrix
             cm = confusion_matrix(y_test, y_pred)
             print(name, " Confusion Matrix:")
-            print(cm)
-            print("Accuracy: ", metrics.accuracy_score(y_test, y_pred))
             
             # Plot confusion matrix with labels "Acceptable", "Success", "Failure"
             sns.heatmap(cm, annot=True, fmt='g', xticklabels=["Acceptable", "Failure", "Sucess"], yticklabels=["Acceptable", "Failure", "Success"], cmap="Blues")
@@ -59,6 +57,7 @@ class MachineLearning:
             plt.ylabel("Actual")
             plt.title(name + " Confusion Matrix")
             plt.show()
+            print("Accuracy: ", metrics.accuracy_score(y_test, y_pred))
 
             
 
@@ -96,7 +95,8 @@ class MachineLearning:
             model.fit(X_train, y_train)
             # Evaluate the model
             y_pred = model.predict(X_test)
-            print(name, ":", metrics.r2_score(y_test, y_pred))
-            print(name, ":", metrics.mean_squared_error(y_test, y_pred))
+            print(name, "R^2:", metrics.r2_score(y_test, y_pred))
+            print(name, "MAE:", metrics.mean_absolute_error(y_test, y_pred))
+            print(name, "RMSE:", metrics.mean_squared_error(y_test, y_pred))
             print("Accuracy:", model.score(X_test, y_test))
 
