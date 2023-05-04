@@ -45,7 +45,6 @@ class MachineLearning:
         models = []
         models.append(("LR", LogisticRegression()))
         models.append(("RF", RandomForestClassifier()))
-        models.append(("SVM", svm.SVC()))
         models.append(("DT", DecisionTreeClassifier()))
 
         for name, model in models:
@@ -93,7 +92,6 @@ class MachineLearning:
         models = []
         models.append(("LR", LinearRegression()))
         models.append(("RF", RandomForestRegressor()))
-        models.append(("SVM", svm.SVR()))
         models.append(("DT", DecisionTreeRegressor()))
 
         for name, model in models:
