@@ -52,12 +52,17 @@ class Utils:
         '''
         Takes in a dictionary with risk factors as keys and a list of samples as values. Randomly choose a sample from each risk factor and write it to a csv file.
         '''
+
+        try:
+            os.remove(filename)
+        except OSError:
+            pass
+        
         amount_of_samples = len(list(samples_with_risk_factor.values())[0]) #amount_of_samples = len of first value in dict 
         index = 0
         for i in range(amount_of_samples):
-            random_risk_factor = random.choice(list(samples_with_risk_factor.keys()))
-        
-            sample = samples_with_risk_factor[random_risk_factor][i]
+            #random_risk_factor = random.choice(list(samples_with_risk_factor.keys()))
+            sample = samples_with_risk_factor["Mixed"][i]
             samples_to_save = []
             tasks = []
             for task in sample.tasks[1:-1]: # Exclude the first and last task
