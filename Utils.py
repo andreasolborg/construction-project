@@ -45,24 +45,23 @@ class Utils:
             project.find_early_dates()
             project.classify_project()
             samples.append(project)
-        dict_of_mixed_samples["Mixed"] = samples
-        return dict_of_mixed_samples
 
-    def write_to_csv(self, samples_with_risk_factor, filename):
+        return samples
+
+    def write_to_csv(self, samples, filename):
         '''
         Takes in a dictionary with risk factors as keys and a list of samples as values. Randomly choose a sample from each risk factor and write it to a csv file.
         '''
-
+        
         try:
             os.remove(filename)
         except OSError:
             pass
-        
-        amount_of_samples = len(list(samples_with_risk_factor.values())[0]) #amount_of_samples = len of first value in dict 
+
         index = 0
-        for i in range(amount_of_samples):
+        for i in range(len(list(samples))):
             #random_risk_factor = random.choice(list(samples_with_risk_factor.keys()))
-            sample = samples_with_risk_factor["Mixed"][i]
+            sample = samples[i]
             samples_to_save = []
             tasks = []
             for task in sample.tasks[1:-1]: # Exclude the first and last task
