@@ -57,7 +57,7 @@ def task5and6():
     print("--- %s seconds ---" % (time.time() - start_time))
 
     print("Making samples with late gate... This may take a while...")
-    samples_with_late_gate = utils.make_mixed_samples_of_random_risk_factors(1000, "Late gate", "Late gate", ["Q.2"])
+    samples_with_late_gate = utils.make_mixed_samples_of_random_risk_factors(1000, "Late gate", "Late gate", ["P.1", "P.2", "P.3"])
     print("--- %s seconds ---" % (time.time() - start_time))
 
     print("Finished making samples.")
