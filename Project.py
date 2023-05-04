@@ -55,9 +55,6 @@ class Project:
             if successor != successors[0]: # If the successor is not the same as the first successor
                 return False
         return True
-    
-        
-        
 
     def add_gate(self, code, description, list_of_predecessors):
         predecessors = [self.get_task_by_code(predecessor) for predecessor in list_of_predecessors]
@@ -221,7 +218,6 @@ class Project:
                 tasks.remove(task)
 
     def classify_project(self):
-        
         '''
         Classify the project as either a success, acceptable, or failure.
         Success: The projects actual duration does not exceed the expected duration by more than 5% (with a risk factor of 1.0)
@@ -236,4 +232,3 @@ class Project:
         else:
             self.classification = "Failure"
         return self.classification
-    
