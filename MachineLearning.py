@@ -1,3 +1,8 @@
+"""
+Author: Andreas Olborg and Jon Grendstad
+Group: group 4
+"""
+
 import numpy as np
 import pandas as pd
 from sklearn import metrics, svm

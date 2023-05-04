@@ -1,3 +1,8 @@
+"""
+Author: Andreas Olborg and Jon Grendstad
+Group: group 4
+"""
+
 import random
 class Task:
     def __init__(self, type, code, description, list_of_durations, predecessors, r=1):  # r is the risk factor, default is 1 (no risk)
