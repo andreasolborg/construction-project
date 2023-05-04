@@ -63,9 +63,6 @@ class MachineLearning:
             plt.show()
             print("Accuracy: ", metrics.accuracy_score(y_test, y_pred))
 
-            
-
-
     def run_regression_methods(self, filename):
         '''
         Perform machine learning on the csv file. Use the first 80% of the samples to train the model and the last 20% to test the model.
@@ -102,4 +99,3 @@ class MachineLearning:
             print(name, "MAE:", metrics.mean_absolute_error(y_test, y_pred))
             print(name, "RMSE:", metrics.mean_squared_error(y_test, y_pred))
             print("Accuracy:", model.score(X_test, y_test))
-

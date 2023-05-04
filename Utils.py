@@ -9,6 +9,7 @@ import statistics
 import pandas as pd
 
 class Utils:
+
     def make_samples(self, n, gate_name=None, gate_description=None, gate_predeccessors=None):
         '''
         Make at random a sample n of values of durations for each value of the risk factor.
@@ -78,7 +79,6 @@ class Utils:
             df = pd.DataFrame(samples_to_save)
             df.to_csv(filename, mode="a", header=False, index=False)
 
-
     def perform_statistics(self, samples_with_risk_factor):
         '''
         Perform statistics on these durations (minimum, maximum,
@@ -99,5 +99,3 @@ class Utils:
             print("Number of acceptables: ", classifications.count("Acceptable"))
             print("Number of failures: ", classifications.count("Failure"))
             print("")
-
-        

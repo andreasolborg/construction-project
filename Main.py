@@ -33,7 +33,6 @@ def task2_and_3():
     print("Expected duration: ", project.expected_duration)
     print("Longest duration: ", project.longest_duration)
 
-
 def task4():
     utils = Utils()
     samples = utils.make_samples(1000)
