@@ -35,16 +35,38 @@ def task4():
     samples = utils.make_samples(1000)
     utils.perform_statistics(samples)
 
-def task5():
+def task5and6():
     start_time = time.time()
     utils = Utils()
     ml = MachineLearning()
 
+    print("Making samples with early gate... This may take a while...")
     samples_with_early_gate = utils.make_mixed_samples_of_random_risk_factors(1000, "Early gate", "Early gate", ["C.2", "C.3"])
     print("--- %s seconds ---" % (time.time() - start_time))
+
+    print("Making samples with center gate... This may take a while...")
+    samples_with_center_gate = utils.make_mixed_samples_of_random_risk_factors(1000, "Center gate", "Center gate", ["H.2","H.3"])
+    print("--- %s seconds ---" % (time.time() - start_time))
+
+    print("Making samples with late gate... This may take a while...")
+    samples_with_late_gate = utils.make_mixed_samples_of_random_risk_factors(1000, "Late gate", "Late gate", ["Q.2"])
+    print("--- %s seconds ---" % (time.time() - start_time))
+
+    print("Finished making samples.")
+
     utils.write_to_csv(samples_with_early_gate, "EarlyGate.csv")
+    utils.write_to_csv(samples_with_center_gate, "CenterGate.csv")
+    utils.write_to_csv(samples_with_late_gate, "LateGate.csv")
+
 
     ml.run_classification_methods("EarlyGate.csv")
+    ml.run_classification_methods("CenterGate.csv")
+    ml.run_classification_methods("LateGate.csv")
+
+    ml.run_regression_methods("EarlyGate.csv")
+    ml.run_regression_methods("CenterGate.csv")
+    ml.run_regression_methods("LateGate.csv")
+    
 
 
 
@@ -85,4 +107,4 @@ def main():
 
 # main()
 # task2_and_3()
-task5()
+task5and6()

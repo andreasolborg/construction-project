@@ -2,9 +2,6 @@ from Project import *
 import random
 import statistics
 import pandas as pd
-import time
-
-
 
 class Utils:
     def make_samples(self, n, gate_name=None, gate_description=None, gate_predeccessors=None):
@@ -76,22 +73,6 @@ class Utils:
             df = pd.DataFrame(samples_to_save)
             df.to_csv(filename, mode="a", header=False, index=False)
 
-            
-
-
-
-
-
-
-
-
-        
-        
-
-
-            
-
-
 
     def perform_statistics(self, samples_with_risk_factor):
         '''
@@ -104,8 +85,6 @@ class Utils:
             durations = [sample.duration for sample in samples]
             classifications = [sample.classification for sample in samples]
             print("Risk factor: ", risk_factor)
-            # print("Durations: ", durations)
-            # print("Classifications: ", classifications)
             print("Minimum duration: ", min(durations))
             print("Maximum duration: ", max(durations))
             print("Mean duration: ", sum(durations)/len(durations))

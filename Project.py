@@ -89,8 +89,11 @@ class Project:
         
     def write_task(self, dot_file):
         for task in self.tasks:
-            # if task.type =
-            dot_file.write('{} [label="{}"];\n'.format(str(id(task)), str(task.code)))
+            # if task.type = "Gate" then write the gate as a orange diamond
+            if task.type == "Gate":
+                dot_file.write('{} [label="{}", shape=diamond, style=filled, fillcolor=orange];\n'.format(str(id(task)), str(task.code)))
+            else:
+                dot_file.write('{} [label="{}"];\n'.format(str(id(task)), str(task.code)))
             for predecessor in task.predecessors:
                 dot_file.write('{} -> {};\n'.format(str(id(predecessor)), str(id(task))))
 
@@ -102,7 +105,7 @@ class Project:
             os.remove("{}.png".format(filename))
         with open("{}.dot".format(filename), "w") as dot_file: 
             dot_file.write("digraph G {\n")
-            dot_file.write('rankdir=LR;\ncenter=true;\n')
+            dot_file.write('center=true;\n')
             self.write_task(dot_file) # print the first task
             dot_file.write("}\n")
         os.system("dot -Tpng -Gdpi=500 {}.dot -o {}.png".format(filename, filename)) # create png from dot file
@@ -246,15 +249,13 @@ def main():
 
     project.print_project()
 
-    # project.draw_pert_diagram("Villah2h3")
+    project.draw_pert_diagram("Villah2h3")
 
     # Add a gate at the end of the project
 
     # project.classify_project()
-    project.export_detailed_project_to_excel("Villa_output_TD_with_gate.xlsx")
+    # project.export_detailed_project_to_excel("Villa_output_TD_with_gate.xlsx")
 
-    gate = project.get_task_by_code("Test_Gate")
-    idx = project.get_task_index(gate)
-    print(idx)
+
 if __name__ == "__main__":
     main()
